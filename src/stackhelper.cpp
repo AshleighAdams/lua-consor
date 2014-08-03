@@ -82,7 +82,8 @@ struct Object//<T>
 	}
 	static T* Get(int Id)
 	{
-		return static_cast<T*>(get_object(Id, ObjectTypes<T>::Type)->ptr);
+		object_t* obj = get_object(Id, ObjectTypes<T>::Type);
+		return obj ? static_cast<T*>(obj->ptr) : nullptr;
 	}
 };
 
