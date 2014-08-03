@@ -23,20 +23,24 @@ end
 
 printtable(Consor)
 
+--[[ -- This here is the same as below, but without using the Lua class wrapper
+local renderer = Consor.core.consor_console_renderer_ctor()
+local input = Consor.core.consor_input_inputsystem_ctor()
 
---local renderer = Consor.core.consor_console_renderer_ctor()
---local input = Consor.core.consor_input_inputsystem_ctor()
+local bg = Consor.core.consor_console_renderer_requestcolour(renderer, Consor.Colour(0, 0, 0), true)
+local fg = Consor.core.consor_console_renderer_requestcolour(renderer, Consor.Colour(1.0, 0.5, 0), true)
+
+--- ...
+]]
 
 local renderer = Consor.Console.ConsoleRenderer()
+local input = Consor.Input.InputSystem()
 
-print(renderer:VersionString())
+local bg = renderer:RequestColour(Consor.Colour(0, 0, 0), true)
+local fg = renderer:RequestColour(Consor.Colour(1.0, 0.5, 0), true)
 
---print(Consor.core.consor_input_inputsystem_keywaiting(input))
---print(Consor.core.consor_console_renderer_versionstring(renderer))
+renderer:DrawString(renderer:RendererName(), Consor.Vector(1, 1), fg, bg)
+renderer:DrawString(renderer:VersionString(), Consor.Vector(1, 2), fg, bg)
 
---local col = Consor.core.consor_console_renderer_requestcolour(renderer, Consor.Colour(1, 0.5, 0), true);
---Consor.core.consor_console_renderer_drawbox(renderer, Consor.Vector(5, 5), Consor.Size(5, 5), col);
---Consor.core.consor_console_renderer_flushtoscreen(renderer);
-
---Consor.core.consor_console_renderer_dtor(renderer)
-
+renderer:FlushToScreen()
+os.execute("sleep 2")
