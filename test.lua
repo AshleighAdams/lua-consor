@@ -24,10 +24,12 @@ end
 printtable(Consor)
 
 
-local renderer = Consor.core.consor_console_renderer_ctor()
-local input = Consor.core.consor_input_inputsystem_ctor()
+--local renderer = Consor.core.consor_console_renderer_ctor()
+--local input = Consor.core.consor_input_inputsystem_ctor()
 
-print(input)
+local renderer = Consor.Console.ConsoleRenderer()
+
+print(renderer:VersionString())
 
 --print(Consor.core.consor_input_inputsystem_keywaiting(input))
 --print(Consor.core.consor_console_renderer_versionstring(renderer))
@@ -36,5 +38,5 @@ print(input)
 --Consor.core.consor_console_renderer_drawbox(renderer, Consor.Vector(5, 5), Consor.Size(5, 5), col);
 --Consor.core.consor_console_renderer_flushtoscreen(renderer);
 
-Consor.core.consor_console_renderer_dtor(renderer)
+--Consor.core.consor_console_renderer_dtor(renderer)
 
