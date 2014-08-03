@@ -113,6 +113,25 @@ struct Stack<int>
 };
 
 template <>
+struct Stack<size_t>
+{
+	static size_t Get(lua_State* L, int Index)
+	{
+		return lua_tointeger(L, Index);
+	}
+	
+	static bool Check(lua_State* L, int Index)
+	{
+		return lua_isnumber(L, Index) == 1;
+	}
+	
+	static void Push(lua_State* L, size_t Value)
+	{
+		lua_pushinteger(L, Value);
+	}
+};
+
+template <>
 struct Stack<double>
 {
 	static double Get(lua_State* L, int Index)

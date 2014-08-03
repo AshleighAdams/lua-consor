@@ -24,5 +24,5 @@ end
 printtable(Consor)
 
 local renderer = Consor.core.consor_console_renderer_ctor();
-print(Consor.core.consor_console_renderer_renderername(renderer), Consor.core.consor_console_renderer_versionstring(renderer))
+
 Consor.core.consor_console_renderer_dtor(renderer);

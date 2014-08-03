@@ -71,6 +71,101 @@ int consor_console_renderer_versionstring(lua_State* L)
 	return 1;
 }
 
+int consor_console_renderer_flushtoscreen(lua_State* L)
+{
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
+	
+	renderer->FlushToScreen();
+	return 0;
+}
+
+//int consor_console_renderer_getcharinformation(lua_State* L)
+
+int consor_console_renderer_getsize(lua_State* L)
+{
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
+	
+	Stack<Size>::Push(L, renderer->GetSize());
+	return 1;
+}
+
+int consor_console_renderer_supportsunicode(lua_State* L)
+{
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
+	
+	Stack<bool>::Push(L, renderer->SupportsUnicode());
+	return 1;
+}
+
+int consor_console_renderer_maxcolours(lua_State* L)
+{
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
+	
+	Stack<size_t>::Push(L, renderer->MaxColours());
+	return 1;
+}
+
+//int consor_console_renderer_getcolours(lua_State* L)
+
+//int consor_console_renderer_setcolours(lua_State* L)
+
+int consor_console_renderer_resetcolours(lua_State* L)
+{
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
+	
+	renderer->ResetColours();
+	return 0;
+}
+
+int consor_console_renderer_requestcolour(lua_State* L)
+{
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
+	lua_check(L, Stack<Colour>::Check(L, 2), "argument #2 expected colour");
+	
+	Colour col = Stack<Colour>::Get(L, 2);
+	bool make = Stack<bool>::Check(L, 3) ? Stack<bool>::Get(L, 3) : false;
+		
+	Stack<Colour>::Push(L, renderer->RequestColour(col, make));
+	return 1;
+}
+
+int consor_console_renderer_flushrequestedcolours(lua_State* L)
+{
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
+	
+	renderer->FlushRequestedColours();
+	return 0;
+}
+
+int consor_console_renderer_settitle(lua_State* L)
+{
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
+	lua_check(L, Stack<string>::Check(L, 2), "argument #2 expected string");
+	
+	string title = Stack<string>::Get(L, 2);
+	renderer->SetTitle(title);
+	return 0;
+}
+
+int consor_console_renderer_clear(lua_State* L)
+{
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
+	lua_check(L, Stack<Colour>::Check(L, 2), "argument #2 expected colour");
+	
+	Colour col = Stack<Colour>::Get(L, 2);
+	renderer->Clear(col);
+	return 0;
+}
+
 #define FUNC(_x_) { #_x_, &_x_ }
 static const luaL_Reg R[] =
 {
@@ -78,7 +173,18 @@ static const luaL_Reg R[] =
 	FUNC(consor_console_renderer_dtor),
 	FUNC(consor_console_renderer_renderername),
 	FUNC(consor_console_renderer_versionstring),
-	{ NULL, NULL }
+	FUNC(consor_console_renderer_flushtoscreen),
+	FUNC(consor_console_renderer_getsize),
+	FUNC(consor_console_renderer_supportsunicode),
+	FUNC(consor_console_renderer_maxcolours),
+	FUNC(consor_console_renderer_resetcolours),
+	FUNC(consor_console_renderer_requestcolour),
+	FUNC(consor_console_renderer_flushrequestedcolours),
+	FUNC(consor_console_renderer_settitle),
+	FUNC(consor_console_renderer_clear),
+	
+	//FUNC(consor_console_renderer_),
+	{ NULL, NULL } //   
 };
 
 extern "C"
