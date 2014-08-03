@@ -36,6 +36,7 @@ using namespace Consor::Console;
 
 #include "stackhelper.cpp"
 
+// IConsoleRenderer
 int consor_console_renderer_ctor(lua_State* L)
 {
 	int renderer = Object<PlatformConsoleRenderer>::Make();
@@ -50,12 +51,33 @@ int consor_console_renderer_dtor(lua_State* L)
 	return 0;
 }
 
+int consor_console_renderer_renderername(lua_State* L)
+{
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
+	
+	string ret = renderer->RendererName();
+	Stack<string>::Push(L, ret);
+	return 1;
+}
+
+int consor_console_renderer_versionstring(lua_State* L)
+{
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
+	
+	string ret = renderer->VersionString();
+	Stack<string>::Push(L, ret);
+	return 1;
+}
 
 #define FUNC(_x_) { #_x_, &_x_ }
 static const luaL_Reg R[] =
 {
 	FUNC(consor_console_renderer_ctor),
 	FUNC(consor_console_renderer_dtor),
+	FUNC(consor_console_renderer_renderername),
+	FUNC(consor_console_renderer_versionstring),
 	{ NULL, NULL }
 };
 

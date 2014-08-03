@@ -12,8 +12,7 @@ consor.o: src/main.cpp
 
 consor/core.so: consor.o
 	mkdir -p consor
-	$(CXX) -std=c++11 -o $@ $(LFLAGS) $(LIBS) $<
-	make clean
+	$(CXX) -std=c++11 -o $@ $(LFLAGS) $(LIBS) $< && make clean
 
 clean:
 	$(RM) *.o

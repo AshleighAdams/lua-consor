@@ -5,6 +5,14 @@
 #include <string>
 #include <exception>
 
+void lua_check(lua_State* L, bool condition, const std::string& message)
+{
+	if(condition)
+		return;
+	lua_pushstring(L, message.c_str());
+	lua_error(L);
+}
+
 struct object_t
 {
 	void* ptr;
@@ -61,13 +69,11 @@ struct Object//<T>
 	static int Make(Args... args)
 	{
 		T* ptr = new T(args...);
-		std::cout << "making " << ptr << "\n";
 		return make_object(ptr, ObjectTypes<T>::Type);
 	}
 	static void Destroy(int Id)
 	{
 		T* ptr = Get(Id);
-		std::cout << "deleting " << ptr << "\n";
 		if(ptr)
 		{
 			remove_object(Id);
