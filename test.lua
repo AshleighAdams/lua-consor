@@ -25,8 +25,12 @@ printtable(Consor)
 
 
 local renderer = Consor.core.consor_console_renderer_ctor()
+local input = Consor.core.consor_input_inputsystem_ctor()
 
-print(Consor.core.consor_console_renderer_versionstring(renderer))
+print(input)
+
+--print(Consor.core.consor_input_inputsystem_keywaiting(input))
+--print(Consor.core.consor_console_renderer_versionstring(renderer))
 
 --local col = Consor.core.consor_console_renderer_requestcolour(renderer, Consor.Colour(1, 0.5, 0), true);
 --Consor.core.consor_console_renderer_drawbox(renderer, Consor.Vector(5, 5), Consor.Size(5, 5), col);

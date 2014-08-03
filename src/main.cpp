@@ -33,6 +33,7 @@
 using namespace std;
 using namespace Consor;
 using namespace Consor::Console;
+using namespace Consor::Input;
 
 #include "stackhelper.cpp"
 
@@ -288,6 +289,58 @@ int consor_console_renderer_inrenderbounds(lua_State* L)
 	}
 }
 
+// IInputSystem
+int consor_input_inputsystem_ctor(lua_State* L)
+{
+	int system = Object<PlatformInputSystem>::Make();
+	Stack<int>::Push(L, system);
+	return 1;
+}
+
+int consor_input_inputsystem_dtor(lua_State* L)
+{
+	int system = Stack<int>::Get(L, 1);
+	Object<PlatformInputSystem>::Destroy(system);
+	return 0;
+}
+
+int consor_input_inputsystem_keywaiting(lua_State* L)
+{
+	IInputSystem* input = Object<IInputSystem>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, input, "argument #1 expected InputSystem");
+	
+	Stack<bool>::Push(L, input->KeyWaiting());
+	return 1;
+}
+
+int consor_input_inputsystem_getkeypress(lua_State* L)
+{
+	IInputSystem* input = Object<IInputSystem>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, input, "argument #1 expected InputSystem");
+	
+	Stack<int>::Push(L, input->GetKeyPress());
+	return 1;
+}
+
+int consor_input_inputsystem_controldown(lua_State* L)
+{
+	IInputSystem* input = Object<IInputSystem>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, input, "argument #1 expected InputSystem");
+	
+	Stack<bool>::Push(L, input->ControlDown());
+	return 1;
+}
+
+int consor_input_inputsystem_shiftdown(lua_State* L)
+{
+	IInputSystem* input = Object<IInputSystem>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, input, "argument #1 expected InputSystem");
+	
+	Stack<bool>::Push(L, input->ShiftDown());
+	return 1;
+}
+
+
 #define FUNC(_x_) { #_x_, &_x_ }
 static const luaL_Reg R[] =
 {
@@ -315,6 +368,14 @@ static const luaL_Reg R[] =
 	FUNC(consor_console_renderer_rendersize),
 	FUNC(consor_console_renderer_renderoffset),
 	FUNC(consor_console_renderer_inrenderbounds),
+	
+	// IInputSystem
+	FUNC(consor_input_inputsystem_ctor),
+	FUNC(consor_input_inputsystem_dtor),
+	FUNC(consor_input_inputsystem_keywaiting),
+	FUNC(consor_input_inputsystem_getkeypress),
+	FUNC(consor_input_inputsystem_controldown),
+	FUNC(consor_input_inputsystem_shiftdown),
 	
 	//FUNC(consor_console_renderer_),
 	{ NULL, NULL } //   

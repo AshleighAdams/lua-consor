@@ -59,6 +59,9 @@ struct ObjectTypes;
 template <> struct ObjectTypes<IConsoleRenderer>          {static const int Type {1};};
 template <> struct ObjectTypes<PlatformConsoleRenderer>   {static const int Type {1};};
 
+template <> struct ObjectTypes<IInputSystem>              {static const int Type {2};};
+template <> struct ObjectTypes<PlatformInputSystem>       {static const int Type {2};};
+
 template <typename T>
 struct Object;
 
