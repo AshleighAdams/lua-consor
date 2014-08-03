@@ -36,11 +36,13 @@ local fg = Consor.core.consor_console_renderer_requestcolour(renderer, Consor.Co
 local renderer = Consor.Console.ConsoleRenderer()
 local input = Consor.Input.InputSystem()
 
-local bg = renderer:RequestColour(Consor.Colour(0, 0, 0), true)
-local fg = renderer:RequestColour(Consor.Colour(1.0, 0.5, 0), true)
+Consor.WindowSystem.Setup(renderer, input)
 
-renderer:DrawString(renderer:RendererName(), Consor.Vector(1, 1), fg, bg)
-renderer:DrawString(renderer:VersionString(), Consor.Vector(1, 2), fg, bg)
+while true do
+	local name = Consor.Util.InputBox("Please enter your name", "Name")
+	local clicked = Consor.Util.MessageBox("Hello, " .. name .. "!", "Hello", {"Again", "Exit"})
+	
+	if clicked == "Exit" then break end
+end
 
-renderer:FlushToScreen()
-os.execute("sleep 2")
+Consor.WindowSystem.Close()

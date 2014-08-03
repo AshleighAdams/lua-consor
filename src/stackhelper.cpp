@@ -45,10 +45,10 @@ void remove_object(int id)
 {
 	objects.erase(id);
 }
-int object_fromptr(void* ptr)
+int object_fromptr(void* ptr, int type)
 {
 	for(auto pair : objects)
-		if(pair.second.ptr == ptr)
+		if(pair.second.ptr == ptr && pair.second.type == type)
 			return pair.first;
 	return 0;
 }
@@ -61,6 +61,9 @@ template <> struct ObjectTypes<PlatformConsoleRenderer>   {static const int Type
 
 template <> struct ObjectTypes<IInputSystem>              {static const int Type {2};};
 template <> struct ObjectTypes<PlatformInputSystem>       {static const int Type {2};};
+
+// All controls need to be under this type :C, in future, ill add this up so controls can't be passed between eachother.
+template <> struct ObjectTypes<Control>                   {static const int Type {3};};
 
 template <typename T>
 struct Object;
@@ -87,6 +90,10 @@ struct Object//<T>
 	{
 		object_t* obj = get_object(Id, ObjectTypes<T>::Type);
 		return obj ? static_cast<T*>(obj->ptr) : nullptr;
+	}
+	static int FromPointer(T* Ptr)
+	{
+		return object_fromptr(Ptr, ObjectTypes<T>::Type);
 	}
 };
 
