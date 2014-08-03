@@ -90,7 +90,16 @@ return {
 				local ret = {handle = core.consor_input_inputsystem_ctor()}
 				return setmetatable(ret, meta)
 			end
-		end)()
+		end)(),
+		Key = {
+			Escape  = 0, Enter = 1, Space = 32, Backspace = '\b', Tab = '\t', Insert = 2, Home = 3, PageUp = 4, Delete = 5, End = 6, PageDown = 7,
+			Up = 14, Down = 15, Left = 16, Right = 17, F1 = 18, F2 = 19, F3 = 20, F4 = 21, F5 = 22, F6 = 23, F7 = 24, F8 = 25, F9 = 26, F10 = 27,
+			F11 = 28, F12 = 29, NumpadDelete = 30, Numpad0 = 31, Numpad1 = 127, Numpad2 = 128, Numpad3 = 129, Numpad4 = 130, Numpad5 = 131,
+			Numpad6 = 132, Numpad7 = 133, Numpad8 = 134, Numpad9 = 135,
+			
+			A = 97, B = 98, C = 99, D = 100, E = 101, F = 102, G = 103, H = 104, I = 105, J = 106, K = 107, L = 108, M = 109, N = 110, O = 111,
+			P = 112, Q = 113, R = 114, S = 115, T = 116, U = 117, V = 118, W = 119, X = 120, Y = 121, Z = 122,
+		}
 	}
 }
 
