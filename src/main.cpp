@@ -10,14 +10,17 @@
 #include <Consor/Util/Math.hpp>
 #include <Consor/Util/Prompts.hpp>
 
-#include <Consor/Controls/Label.hpp>
+// All Consor controls
 #include <Consor/Controls/Button.hpp>
-#include <Consor/Controls/TextBox.hpp>
-#include <Consor/Controls/PasswordBox.hpp>
 #include <Consor/Controls/CheckBox.hpp>
-#include <Consor/Controls/ProgressBar.hpp>
-#include <Consor/Controls/VerticalProgressBar.hpp>
+#include <Consor/Controls/Graph.hpp>
 #include <Consor/Controls/HorizontalScrollbar.hpp>
+#include <Consor/Controls/Label.hpp>
+#include <Consor/Controls/PasswordBox.hpp>
+#include <Consor/Controls/ProgressBar.hpp>
+#include <Consor/Controls/RadioBox.hpp>
+#include <Consor/Controls/TextBox.hpp>
+#include <Consor/Controls/VerticalProgressBar.hpp>
 #include <Consor/Controls/VerticalScrollbar.hpp>
 
 #include <Consor/Containers/WindowContainer.hpp>
@@ -588,6 +591,135 @@ int consor_util_sleep(lua_State* L)
 	return 0;
 }
 
+// Control bindings
+
+int consor_control_getsize(lua_State* L)
+{
+	Control* ctrl = Object<Control>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, ctrl, "argument #1 expected control");
+	
+	Stack<Size>::Push(L, ctrl->GetSize());
+	return 1;
+}
+
+int consor_control_onresize(lua_State* L)
+{
+	Control* ctrl = Object<Control>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, ctrl, "argument #1 expected control");
+	lua_check(L, Stack<Size>::Check(L, 2), "argument #2 expected size");
+	
+	Size sz = Stack<Size>::Get(L, 2);
+	ctrl->OnResize(sz);
+	return 0;
+}
+
+int consor_control_forceresize(lua_State* L)
+{
+	Control* ctrl = Object<Control>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, ctrl, "argument #1 expected control");
+	lua_check(L, Stack<Size>::Check(L, 2), "argument #2 expected size");
+	
+	Size sz = Stack<Size>::Get(L, 2);
+	ctrl->ForceResize(sz);
+	return 0;
+}
+
+int consor_control_draw(lua_State* L)
+{
+	Control* ctrl = Object<Control>::Get(Stack<int>::Get(L, 1));
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 2));
+	ISkin* skin = Object<ISkin>::Get(Stack<int>::Get(L, 4));
+	
+	lua_check(L, ctrl, "argument #1 expected control");
+	lua_check(L, renderer, "argument #2 expected renderer");
+	lua_check(L, Stack<bool>::Check(L, 3), "argument #3 expected boolean");
+	lua_check(L, skin, "argument #4 expected skin");
+	
+	bool focused = Stack<bool>::Get(L, 3);
+	ctrl->Draw(*renderer, focused, *skin);
+	return 0;
+}
+
+int consor_control_handleinput(lua_State* L)
+{
+	Control* ctrl = Object<Control>::Get(Stack<int>::Get(L, 1));
+	IInputSystem* input = Object<IInputSystem>::Get(Stack<int>::Get(L, 3));
+	lua_check(L, ctrl, "argument #1 expected control");
+	lua_check(L, Stack<int>::Check(L, 2), "argument #2 expected key");
+	lua_check(L, input, "argument #3 expected inputsystem");
+	
+	int key = Stack<int>::Get(L, 2);
+	Stack<bool>::Push(L, ctrl->HandleInput((Key)key, *input));
+	return 1;	
+}
+
+int consor_control_canfocus(lua_State* L)
+{
+	Control* ctrl = Object<Control>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, ctrl, "argument #1 expected control");
+	
+	Stack<bool>::Push(L, ctrl->CanFocus());
+	return 1;
+}
+
+//////////////////////////////////////////////////////////////////////////////// Containers
+
+// AlignContainer
+int consor_aligncontainer_ctor(lua_State* L)
+{
+	Control* client = Object<Control>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, client, "argument #1 expected control");
+	lua_check(L, Stack<int>::Check(L, 2), "argument #2 expected number");
+	lua_check(L, Stack<int>::Check(L, 3), "argument #3 expected number");
+	
+	int axis = Stack<int>::Get(L, 2);
+	int align = Stack<int>::Get(L, 3);
+	
+	int handel = Object<AlignContainer>::Make(*client, (AlignContainer::Axis)axis, (AlignContainer::Align)align);
+	Stack<int>::Push(L, handel);
+	return 1;
+}
+
+int consor_aligncontainer_getsize(lua_State* L)
+{
+	struct {} not_implimented; throw not_implimented;
+}
+
+// BorderContainer
+int consor_bordercontainer_ctor(lua_State* L)
+{
+	Control* client = Object<Control>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, client, "argument #1 expected control");
+	
+	if(lua_gettop(L) == 2) // client, border
+	{
+		lua_check(L, Stack<int>::Check(L, 2), "argument #2 expected number");
+		int border = Stack<int>::Get(L, 2);
+		
+		int handel = Object<BorderContainer>::Make(*client, border);
+		Stack<int>::Push(L, handel);
+		return 1;
+	}
+	else
+	{
+		lua_check(L, Stack<int>::Check(L, 2), "argument #2 expected number");
+		lua_check(L, Stack<int>::Check(L, 3), "argument #3 expected number");
+		lua_check(L, Stack<int>::Check(L, 4), "argument #4 expected number");
+		lua_check(L, Stack<int>::Check(L, 5), "argument #5 expected number");
+		int left   = Stack<int>::Get(L, 2),
+		    right  = Stack<int>::Get(L, 3),
+		    top    = Stack<int>::Get(L, 4),
+		    bottom = Stack<int>::Get(L, 5);
+		
+		int handel = Object<BorderContainer>::Make(*client, left, right, top, bottom);
+		Stack<int>::Push(L, handel);
+		return 1;
+	}
+}
+
+
+
+
 #define FUNC(_x_) { #_x_, &_x_ }
 static const luaL_Reg R[] =
 {
@@ -651,6 +783,21 @@ static const luaL_Reg R[] =
 	FUNC(consor_util_wraptext),
 	FUNC(consor_util_gettime),
 	FUNC(consor_util_sleep),
+	
+	// Control
+	FUNC(consor_control_getsize),
+	FUNC(consor_control_onresize),
+	FUNC(consor_control_forceresize),
+	FUNC(consor_control_draw),
+	FUNC(consor_control_handleinput),
+	FUNC(consor_control_canfocus),
+	
+	// AlignContainer
+	FUNC(consor_aligncontainer_ctor),
+	FUNC(consor_aligncontainer_getsize),
+	
+	// BorderContainer
+	FUNC(consor_bordercontainer_ctor),
 	//FUNC(consor_console_renderer_),
 	{ NULL, NULL } //   
 };

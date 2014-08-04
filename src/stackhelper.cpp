@@ -62,8 +62,35 @@ template <> struct ObjectTypes<PlatformConsoleRenderer>   {static const int Type
 template <> struct ObjectTypes<IInputSystem>              {static const int Type {2};};
 template <> struct ObjectTypes<PlatformInputSystem>       {static const int Type {2};};
 
+// Skins
+template <> struct ObjectTypes<ISkin>                     {static const int Type {4};};
+
 // All controls need to be under this type :C, in future, ill add this up so controls can't be passed between eachother.
-template <> struct ObjectTypes<Control>                   {static const int Type {3};};
+template <> struct ObjectTypes<Control>                   {static const int Type {5};};
+
+// Containers
+template <> struct ObjectTypes<AlignContainer>            {static const int Type {5};};
+template <> struct ObjectTypes<BorderContainer>           {static const int Type {5};};
+template <> struct ObjectTypes<FlowContainer>             {static const int Type {5};};
+template <> struct ObjectTypes<ScrollContainer>           {static const int Type {5};};
+template <> struct ObjectTypes<WindowContainer>           {static const int Type {5};};
+
+// Controls
+template <> struct ObjectTypes<Button>                    {static const int Type {5};};
+template <> struct ObjectTypes<CheckBox>                  {static const int Type {5};};
+template <> struct ObjectTypes<Graph>                     {static const int Type {5};};
+template <> struct ObjectTypes<HorizontalScrollbar>       {static const int Type {5};};
+template <> struct ObjectTypes<Label>                     {static const int Type {5};};
+template <> struct ObjectTypes<PasswordBox>               {static const int Type {5};};
+template <> struct ObjectTypes<ProgressBar>               {static const int Type {5};};
+template <> struct ObjectTypes<RadioBox>                  {static const int Type {5};};
+template <> struct ObjectTypes<TextBox>                   {static const int Type {5};};
+template <> struct ObjectTypes<VerticalProgressBar>       {static const int Type {5};};
+template <> struct ObjectTypes<VerticalScrollbar>         {static const int Type {5};};
+
+
+
+// Containers
 
 template <typename T>
 struct Object;

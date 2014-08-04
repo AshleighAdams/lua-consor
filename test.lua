@@ -8,7 +8,16 @@ local input = Consor.Input.InputSystem()
 Consor.WindowSystem.Setup(renderer, input)
 
 Consor.WindowSystem.RegisterHotKey(nil, string.byte("`"), false, false, function()
-	Consor.Util.Log("This is a hot key!");
+	local tmp = {}
+	for k,v in pairs(Consor.core) do
+		table.insert(tmp, k)
+	end
+	
+	table.sort(tmp)
+	
+	for k,v in pairs(tmp) do
+		Consor.Util.Log("Core function: %s", v);
+	end
 end)
 
 while true do
