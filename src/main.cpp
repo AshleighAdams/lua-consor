@@ -592,6 +592,12 @@ int consor_util_sleep(lua_State* L)
 }
 
 // Control bindings
+int consor_control_dtor(lua_State* L)
+{
+	int renderer = Stack<int>::Get(L, 1);
+	Object<Control>::Destroy(renderer);
+	return 0;
+}
 
 int consor_control_getsize(lua_State* L)
 {
@@ -717,8 +723,31 @@ int consor_bordercontainer_ctor(lua_State* L)
 	}
 }
 
+// FlowContainer
+int consor_flowcontainer_ctor(lua_State* L)
+{
+	lua_check(L, Stack<int>::Check(L, 1), "argument #1 expected number");
+	lua_check(L, Stack<int>::Check(L, 2), "argument #2 expected number");
+	
+	int axis = Stack<int>::Get(L, 1);
+	int seperation = Stack<int>::Get(L, 2);
+	
+	int handel = Object<FlowContainer>::Make((FlowContainer::FlowAxis)axis, seperation);
+	Stack<int>::Push(L, handel);
+	return 1;
+}
 
-
+int consor_flowcontainer_addcontrol(lua_State* L)
+{
+	FlowContainer* self = Object<FlowContainer>::Get(Stack<int>::Get(L, 1));
+	Control* ctrl = Object<Control>::Get(Stack<int>::Get(L, 2));
+	lua_check(L, self, "argument #1 expected flowcontainer");
+	lua_check(L, ctrl, "argument #1 expected control");
+		
+	double size = Stack<double>::Get(L, 3);
+	self->AddControl(*ctrl, size);
+	return 0;
+}
 
 #define FUNC(_x_) { #_x_, &_x_ }
 static const luaL_Reg R[] =
@@ -785,6 +814,7 @@ static const luaL_Reg R[] =
 	FUNC(consor_util_sleep),
 	
 	// Control
+	FUNC(consor_control_dtor),
 	FUNC(consor_control_getsize),
 	FUNC(consor_control_onresize),
 	FUNC(consor_control_forceresize),
@@ -798,6 +828,11 @@ static const luaL_Reg R[] =
 	
 	// BorderContainer
 	FUNC(consor_bordercontainer_ctor),
+	
+	// FlowContainer
+	FUNC(consor_flowcontainer_ctor),
+	FUNC(consor_flowcontainer_addcontrol),
+	
 	//FUNC(consor_console_renderer_),
 	{ NULL, NULL } //   
 };
