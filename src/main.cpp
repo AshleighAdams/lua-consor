@@ -749,6 +749,96 @@ int consor_flowcontainer_addcontrol(lua_State* L)
 	return 0;
 }
 
+// ScrollContainer
+int consor_scrollcontainer_ctor(lua_State* L)
+{
+	Control* client = Object<Control>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, client, "argument #1 expected control");
+	lua_check(L, Stack<string>::Check(L, 2), "argument #2 expected size");
+	
+	Size sz = Stack<Size>::Get(L, 2);
+	
+	int handel = Object<ScrollContainer>::Make(*client, sz);
+	Stack<int>::Push(L, handel);
+	return 1;
+}
+
+int consor_scrollcontainer_scrollleft(lua_State* L)
+{
+	ScrollContainer* self = Object<ScrollContainer>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected scrollcontainer");
+	
+	size_t count = Stack<size_t>::Check(L, 2) ? Stack<size_t>::Get(L, 2) : 1;
+	Stack<bool>::Push(L, self->ScrollLeft(count));
+	return 1;
+}
+
+int consor_scrollcontainer_scrollright(lua_State* L)
+{
+	ScrollContainer* self = Object<ScrollContainer>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected scrollcontainer");
+	
+	size_t count = Stack<size_t>::Check(L, 2) ? Stack<size_t>::Get(L, 2) : 1;
+	Stack<bool>::Push(L, self->ScrollRight(count));
+	return 1;
+}
+
+int consor_scrollcontainer_scrollup(lua_State* L)
+{
+	ScrollContainer* self = Object<ScrollContainer>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected scrollcontainer");
+	
+	size_t count = Stack<size_t>::Check(L, 2) ? Stack<size_t>::Get(L, 2) : 1;
+	Stack<bool>::Push(L, self->ScrollUp(count));
+	return 1;
+}
+
+int consor_scrollcontainer_scrolldown(lua_State* L)
+{
+	ScrollContainer* self = Object<ScrollContainer>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected scrollcontainer");
+	
+	size_t count = Stack<size_t>::Check(L, 2) ? Stack<size_t>::Get(L, 2) : 1;
+	Stack<bool>::Push(L, self->ScrollDown(count));
+	return 1;
+}
+
+// WindowContainer
+int consor_windowcontainer_ctor(lua_State* L)
+{
+	Control* client = Object<Control>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, client, "argument #1 expected control");
+	lua_check(L, Stack<string>::Check(L, 2), "argument #2 expected string");
+	
+	string title = Stack<string>::Get(L, 2);
+	
+	int handel = Object<WindowContainer>::Make(*client, title);
+	Stack<int>::Push(L, handel);
+	return 1;
+}
+
+//////////////////////////////////////////////////////////////////////////////// Controls
+
+// Button
+int consor_button_ctor(lua_State* L)
+{	
+	int handel = Object<Button>::Make();
+	Stack<int>::Push(L, handel);
+	return 1;
+}
+
+int consor_button_settext(lua_State* L)
+{
+	Button* self = Object<Button>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected button");
+	lua_check(L, Stack<string>::Check(L, 2), "argument #1 expected string");
+	
+	string txt = Stack<string>::Get(L, 2);
+	self->SetText(txt);
+	return 0;
+}
+
+
 #define FUNC(_x_) { #_x_, &_x_ }
 static const luaL_Reg R[] =
 {
@@ -832,6 +922,19 @@ static const luaL_Reg R[] =
 	// FlowContainer
 	FUNC(consor_flowcontainer_ctor),
 	FUNC(consor_flowcontainer_addcontrol),
+	
+	FUNC(consor_scrollcontainer_ctor),
+	FUNC(consor_scrollcontainer_scrollleft),
+	FUNC(consor_scrollcontainer_scrollright),
+	FUNC(consor_scrollcontainer_scrollup),
+	FUNC(consor_scrollcontainer_scrolldown),
+	
+	// WindowContainer
+	FUNC(consor_windowcontainer_ctor),
+	
+	// Button
+	FUNC(consor_button_ctor),
+	FUNC(consor_button_settext),
 	
 	//FUNC(consor_console_renderer_),
 	{ NULL, NULL } //   
