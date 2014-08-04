@@ -413,35 +413,6 @@ int consor_windowsystem_unregisterwindow(lua_State* L)
 	return 0;
 }
 
-
-// This is to be held with a shared ptr
-struct lua_function_reference_backend
-{
-	lua_State* L;
-	int ref;
-	
-	lua_function_reference_backend(lua_State* l) : L(l)
-	{ ref = luaL_ref(L, LUA_REGISTRYINDEX); }
-	
-	~lua_function_reference_backend()
-	{ luaL_unref(L, LUA_REGISTRYINDEX, ref); }
-};
-
-
-struct lua_function_reference_void
-{
-	std::shared_ptr<lua_function_reference_backend> ref;
-	
-	lua_function_reference_void(lua_State* L) :
-		ref(std::make_shared<lua_function_reference_backend>(L))
-	{}
-	void operator()()
-	{
-		lua_rawgeti(ref->L, LUA_REGISTRYINDEX, ref->ref);
-		lua_call(ref->L, 0, 0);
-	}
-};
-
 int consor_windowsystem_registerhotkey(lua_State* L)
 {
 	Control* ctrl = Object<Control>::Get(Stack<int>::Get(L, 1)); // can be nullptr
@@ -454,8 +425,9 @@ int consor_windowsystem_registerhotkey(lua_State* L)
 	int key = Stack<int>::Get(L, 2);
 	bool ctl = Stack<bool>::Get(L, 3);
 	bool sft = Stack<bool>::Get(L, 4);
+	lua_function_reference<void()> func(L, 5);
 	
-	WindowSystem::RegisterHotKey(ctrl, (Key)key, ctl, sft, std::move(lua_function_reference_void(L)));
+	WindowSystem::RegisterHotKey(ctrl, (Key)key, ctl, sft, func);
 	return 0;
 }
 

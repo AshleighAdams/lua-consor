@@ -12,10 +12,9 @@ Consor.WindowSystem.RegisterHotKey(nil, string.byte("`"), false, false, function
 end)
 
 while true do
-	local name = Consor.Util.InputBox("Please enter your name", "Name")
-	local clicked = Consor.Util.MessageBox("Hello, " .. name .. "!", "Hello", {"Again", "Exit"})
-	
-	if clicked == "Exit" then break end
+	local t = Consor.Util.GetTime()
+	local tstr = Consor.Util.FormatTimeSpan(t)
+	Consor.Util.MessageBox("You've been running this program for " .. tstr, "Running", {"OK"})
 end
 
 Consor.WindowSystem.Close()

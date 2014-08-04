@@ -102,6 +102,26 @@ struct Object//<T>
 template <typename T>
 struct Stack;
 
+// void / nil
+
+template <>
+struct Stack<void>
+{
+	static void Get(lua_State* L, int Index)
+	{
+	}
+	
+	static bool Check(lua_State* L, int Index)
+	{
+		return lua_isnoneornil(L, Index) == 1;
+	}
+	
+	static void Push(lua_State* L, int Value)
+	{
+		lua_pushnil(L);
+	}
+};
+
 // Numbers
 
 template <>
@@ -364,4 +384,65 @@ struct Stack<Colour>
 		lua_setfield(L, -2, "A");
 	}
 };
+
+
+// Convert a function on the stack at index position to a std::function<void(...)>
+
+// This is to be held with a shared ptr
+struct lua_function_reference_backend
+{
+	lua_State* L;
+	int ref;
+	
+	lua_function_reference_backend(lua_State* l, int index) : L(l)
+	{
+		lua_pushvalue(L, index);
+		ref = luaL_ref(L, LUA_REGISTRYINDEX);
+	}
+	
+	~lua_function_reference_backend()
+	{ luaL_unref(L, LUA_REGISTRYINDEX, ref); }
+};
+
+
+// Allow a return value
+template <typename T> struct lua_function_reference;
+
+template<typename R, typename... Args>
+struct lua_function_reference <R(Args...)>
+{
+	std::shared_ptr<lua_function_reference_backend> ref;
+	
+	lua_function_reference(lua_State* L, int Index) :
+		ref(std::make_shared<lua_function_reference_backend>(L, Index))
+	{}
+	
+	// This is called at the end
+	void PushArgs(int& nargs) {}
+	
+	template<typename T, typename... Args2>
+	void PushArgs(int& nargs, T first, Args2... args)
+	{
+		Stack<T>::Push(ref->L, first);
+		nargs++;
+		this->PushArgs(nargs, args...);
+	}
+	
+	R operator()(Args... args)
+	{
+		lua_rawgeti(ref->L, LUA_REGISTRYINDEX, ref->ref);
+		
+		int nargs = 0;
+		int nrets = 1;
+		this->PushArgs(nargs, args...);
+		lua_call(ref->L, nargs, nrets);
+		
+		return Stack<R>::Get(ref->L, -1);
+	}
+	
+};
+
+
 #endif
+
+
