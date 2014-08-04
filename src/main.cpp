@@ -813,6 +813,9 @@ int consor_windowcontainer_ctor(lua_State* L)
 	string title = Stack<string>::Get(L, 2);
 	
 	int handel = Object<WindowContainer>::Make(*client, title);
+	
+	cerr << client->GetSize() << "\n";
+	
 	Stack<int>::Push(L, handel);
 	return 1;
 }
@@ -831,13 +834,25 @@ int consor_button_settext(lua_State* L)
 {
 	Button* self = Object<Button>::Get(Stack<int>::Get(L, 1));
 	lua_check(L, self, "argument #1 expected button");
-	lua_check(L, Stack<string>::Check(L, 2), "argument #1 expected string");
+	lua_check(L, Stack<string>::Check(L, 2), "argument #2 expected string");
 	
 	string txt = Stack<string>::Get(L, 2);
 	self->SetText(txt);
 	return 0;
 }
 
+int consor_button_click(lua_State* L)
+{
+	Button* self = Object<Button>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected button");
+	lua_check(L, lua_isfunction(L, 2), "argument #2 expected function");
+	
+	lua_function_reference<void()> func(L, 2);
+	
+	auto handle = self->Click += func;
+	handle->DontUnregister();
+	return 0;
+}
 
 #define FUNC(_x_) { #_x_, &_x_ }
 static const luaL_Reg R[] =
@@ -935,6 +950,7 @@ static const luaL_Reg R[] =
 	// Button
 	FUNC(consor_button_ctor),
 	FUNC(consor_button_settext),
+	FUNC(consor_button_click),
 	
 	//FUNC(consor_console_renderer_),
 	{ NULL, NULL } //   

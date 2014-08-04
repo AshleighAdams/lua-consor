@@ -20,10 +20,12 @@ Consor.WindowSystem.RegisterHotKey(nil, string.byte("`"), false, false, function
 	end
 end)
 
-while true do
-	local t = Consor.Util.GetTime()
-	local tstr = Consor.Util.FormatTimeSpan(t)
-	Consor.Util.MessageBox("You've been running this program for " .. tstr, "Running", {"OK"})
-end
+local btn = Consor.core.consor_button_ctor()
+Consor.core.consor_button_settext(btn, "Hello, world")
 
+local window = Consor.core.consor_windowcontainer_ctor(btn, "Hi!")
+
+Consor.core.consor_windowsystem_registerwindow(window, Consor.Vector(-1, -1))
+
+while true do end
 Consor.WindowSystem.Close()
