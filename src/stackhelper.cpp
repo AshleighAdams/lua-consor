@@ -445,6 +445,7 @@ struct lua_function_reference_backend
 		try
 		{
 			lualock lock(L);
+			// FIXME: why would this fail?
 			luaL_unref(L, LUA_REGISTRYINDEX, ref);
 		}catch(...)
 		{

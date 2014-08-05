@@ -820,6 +820,26 @@ int consor_windowcontainer_ctor(lua_State* L)
 	return 1;
 }
 
+int consor_windowcontainer_show(lua_State* L)
+{
+	WindowContainer* self = Object<WindowContainer>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected windowcontainer");
+	
+	if(Stack<Vector>::Check(L, 2))
+		self->Show(Stack<Vector>::Get(L, 2));
+	else
+		self->Show();
+	return 0;
+}
+
+int consor_windowcontainer_close(lua_State* L)
+{
+	WindowContainer* self = Object<WindowContainer>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected windowcontainer");
+	self->Close();
+	return 0;
+}
+
 //////////////////////////////////////////////////////////////////////////////// Controls
 
 // Button
@@ -997,6 +1017,8 @@ static const luaL_Reg R[] =
 	
 	// WindowContainer
 	FUNC(consor_windowcontainer_ctor),
+	FUNC(consor_windowcontainer_show),
+	FUNC(consor_windowcontainer_close),
 	
 	// Button
 	FUNC(consor_button_ctor),
@@ -1018,6 +1040,7 @@ static const luaL_Reg R[] =
 
 // TODO: WindowSystem custom implimentation!
 // WindowSystem thingy to "call" a Lua WindowSystem implimentation!
+
 
 
 

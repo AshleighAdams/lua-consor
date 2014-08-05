@@ -30,6 +30,15 @@ local input = Consor.Input.InputSystem()
 
 Consor.WindowSystem.Setup(renderer, input)
 
+local corefuncs = {}
+for k,v in pairs(Consor.core) do
+	table.insert(corefuncs, k)
+end
+table.sort(corefuncs)
+
+Consor.Util.ChoiceList("CoreFuncs", "Test", corefuncs)
+if true then return end
+
 Consor.WindowSystem.RegisterHotKey(nil, string.byte("`"), false, false, function()
 	local tmp = {}
 	for k,v in pairs(Consor.core) do
@@ -46,13 +55,20 @@ end)
 local client = Consor.core.consor_checkbox_ctor()
 Consor.core.consor_checkbox_settext(client, "Hello, world")
 
+
+
+local window
 Consor.core.consor_checkbox_onvaluechanged(client, function(val)
 	print("checked state: ", val)
+	Consor.Util.Sleep(1.0);
+	Consor.core.consor_windowcontainer_close(window)
 end)
 
-Consor.core.consor_windowsystem_registerwindow( Consor.core.consor_windowcontainer_ctor(client, "Hi!"), Consor.Vector(-1, -1) )
 
-while true do end
+window = Consor.core.consor_windowcontainer_ctor(client, "Hi!")
+Consor.core.consor_windowcontainer_show(window)
+
+
 Consor.WindowSystem.Close()
 
 
