@@ -99,7 +99,7 @@ template <typename T>
 struct Object//<T>
 {
 	template <typename... Args>
-	static int Make(Args... args)
+	static int Make(Args&&... args) // GOT IT, THIS IS BEING DISPOSED, AND THUS ~T() IS BEING CALLED!
 	{
 		T* ptr = new T(args...);
 		return make_object(ptr, ObjectTypes<T>::Type);
