@@ -43,15 +43,16 @@ Consor.WindowSystem.RegisterHotKey(nil, string.byte("`"), false, false, function
 	end
 end)
 
-local btn = Consor.core.consor_button_ctor()
-Consor.core.consor_button_settext(btn, "Hello, world")
+local client = Consor.core.consor_checkbox_ctor()
+Consor.core.consor_checkbox_settext(client, "Hello, world")
 
-Consor.core.consor_button_click(btn, function()
-	Consor.core.consor_windowsystem_unregisterwindow(btn)
+Consor.core.consor_checkbox_onvaluechanged(client, function(val)
+	print("checked state: ", val)
 end)
 
-local window = Consor.core.consor_windowcontainer_ctor(btn, "Hi!")
+Consor.core.consor_windowsystem_registerwindow( Consor.core.consor_windowcontainer_ctor(client, "Hi!"), Consor.Vector(-1, -1) )
 
-Consor.core.consor_windowsystem_registerwindow(window, Consor.Vector(-1, -1))
-
+while true do end
 Consor.WindowSystem.Close()
+
+

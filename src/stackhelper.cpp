@@ -414,6 +414,18 @@ struct Stack<Colour>
 
 
 // Convert a function on the stack at index position to a std::function<void(...)>
+struct lualock
+{
+	lua_State* L;
+	lualock(lua_State* l) : L(l)
+	{
+		//lua_lock(L);
+	}
+	~lualock()
+	{
+		//lua_unlock(L);
+	}
+};
 
 // This is to be held with a shared ptr
 struct lua_function_reference_backend
@@ -423,12 +435,22 @@ struct lua_function_reference_backend
 	
 	lua_function_reference_backend(lua_State* l, int index) : L(l)
 	{
+		lualock lock(L);
 		lua_pushvalue(L, index);
 		ref = luaL_ref(L, LUA_REGISTRYINDEX);
 	}
 	
 	~lua_function_reference_backend()
-	{ luaL_unref(L, LUA_REGISTRYINDEX, ref); }
+	{
+		try
+		{
+			lualock lock(L);
+			luaL_unref(L, LUA_REGISTRYINDEX, ref);
+		}catch(...)
+		{
+			// The lua state must've already been destroyed?
+		}
+	}
 };
 
 
@@ -457,6 +479,7 @@ struct lua_function_reference <R(Args...)>
 	
 	R operator()(Args... args)
 	{
+		lualock lock(ref->L);
 		lua_rawgeti(ref->L, LUA_REGISTRYINDEX, ref->ref);
 		
 		int nargs = 0;

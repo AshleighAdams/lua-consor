@@ -841,7 +841,7 @@ int consor_button_settext(lua_State* L)
 	return 0;
 }
 
-int consor_button_click(lua_State* L)
+int consor_button_onclick(lua_State* L)
 {
 	Button* self = Object<Button>::Get(Stack<int>::Get(L, 1));
 	lua_check(L, self, "argument #1 expected button");
@@ -850,6 +850,57 @@ int consor_button_click(lua_State* L)
 	lua_function_reference<void()> func(L, 2);
 	
 	auto handle = self->Click += func;
+	handle->DontUnregister();
+	return 0;
+}
+
+// CheckBox
+int consor_checkbox_ctor(lua_State* L)
+{	
+	int handel = Object<CheckBox>::Make();
+	Stack<int>::Push(L, handel);
+	return 1;
+}
+
+int consor_checkbox_settext(lua_State* L)
+{
+	CheckBox* self = Object<CheckBox>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected checkbox");
+	lua_check(L, Stack<string>::Check(L, 2), "argument #2 expected string");
+	
+	string txt = Stack<string>::Get(L, 2);
+	self->SetText(txt);
+	return 0;
+}
+
+int consor_checkbox_checked(lua_State* L)
+{
+	CheckBox* self = Object<CheckBox>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected checkbox");
+	
+	Stack<bool>::Push(L, self->Checked() );
+	return 1;
+}
+
+int consor_checkbox_setchecked(lua_State* L)
+{
+	CheckBox* self = Object<CheckBox>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected checkbox");
+	lua_check(L, Stack<bool>::Check(L, 2), "argument #2 expected boolean");
+	
+	self->SetChecked( Stack<bool>::Get(L, 2) );
+	return 0;
+}
+
+int consor_checkbox_onvaluechanged(lua_State* L)
+{
+	CheckBox* self = Object<CheckBox>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected checkbox");
+	lua_check(L, lua_isfunction(L, 2), "argument #2 expected function");
+	
+	lua_function_reference<void(bool)> func(L, 2);
+	
+	auto handle = self->ValueChanged += func;
 	handle->DontUnregister();
 	return 0;
 }
@@ -950,11 +1001,25 @@ static const luaL_Reg R[] =
 	// Button
 	FUNC(consor_button_ctor),
 	FUNC(consor_button_settext),
-	FUNC(consor_button_click),
+	FUNC(consor_button_onclick),
+	
+	// CheckBox
+	FUNC(consor_checkbox_ctor),
+	FUNC(consor_checkbox_settext),
+	FUNC(consor_checkbox_checked),
+	FUNC(consor_checkbox_setchecked),
+	FUNC(consor_checkbox_onvaluechanged),
 	
 	//FUNC(consor_console_renderer_),
 	{ NULL, NULL } //   
 };
+
+
+
+// TODO: WindowSystem custom implimentation!
+// WindowSystem thingy to "call" a Lua WindowSystem implimentation!
+
+
 
 extern "C"
 {
