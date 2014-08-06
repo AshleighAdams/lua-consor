@@ -20,6 +20,7 @@ return {
 		RendererName             = function()                                   return core.consor_windowsystem_renderername            () end,
 		RendeererVersionString   = function()                                   return core.consor_windowsystem_rendererversionstring   () end,
 		RequestColour            = function(col, make)                          return core.consor_windowsystem_requestcolour           (col, make) end,
+		SetSkin                  = function(skin)                               return core.consor_windowsystem_setskin                 (skin) end,
 	},
 	
 	Util = {

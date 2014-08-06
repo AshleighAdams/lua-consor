@@ -40,6 +40,161 @@ using namespace Consor::Input;
 
 #include "stackhelper.cpp"
 
+// This will allow skins to be created inside of Lua
+class LuaSkin : public ISkin
+{
+	lua_State* L;
+	
+	#define SKIN_DECLARE(_R_, _NAME_) \
+		lua_function_reference<_R_()>* _p ## _NAME_ {nullptr};
+	
+	#define SKIN_DECLARE_ARG(_R_, _ARG_, _NAME_) \
+		lua_function_reference<_R_(_ARG_)>* _p ## _NAME_ {nullptr};
+	
+	SKIN_DECLARE(Colour, Canvas);
+	SKIN_DECLARE(Colour, LabelForeground);
+	SKIN_DECLARE(Colour, LabelForegroundFocused);
+	SKIN_DECLARE(Colour, WindowBorder);
+	SKIN_DECLARE(Colour, WindowBackground);
+	SKIN_DECLARE(Colour, WindowForeground);
+	SKIN_DECLARE(Colour, WindowForegroundShine);
+	SKIN_DECLARE(char32_t, WindowTitleLeftChar);
+	SKIN_DECLARE(char32_t, WindowTitleRightChar);
+	SKIN_DECLARE(Colour, ScrollForeground);
+	SKIN_DECLARE(Colour, ScrollForegroundFocused);
+	SKIN_DECLARE(Colour, ScrollBackground);
+	SKIN_DECLARE(Colour, TextBoxForeground);
+	SKIN_DECLARE(Colour, TextBoxForegroundFocused);
+	SKIN_DECLARE(Colour, TextBoxBackground);
+	SKIN_DECLARE_ARG(Colour, double, ProgressBarForeground);
+	SKIN_DECLARE_ARG(Colour, double, ProgressBarBackground);
+	SKIN_DECLARE_ARG(Colour, double, ProgressBarPercent);
+	
+public:
+	LuaSkin(IConsoleRenderer& Renderer, lua_State* l, int Index) : ISkin(Renderer),
+		L(l)
+	{
+		if(!lua_istable(L, Index))
+			throw std::runtime_error("Value at Index is not a table!");
+		
+		#undef SKIN_DECLARE
+		#define SKIN_DECLARE(_R_, _NAME_) \
+			lua_getfield(L, Index, #_NAME_); \
+			if(lua_isfunction(L, -1)) \
+				_p ## _NAME_ = new lua_function_reference<_R_()>(L, -1); \
+			lua_pop(L, 1);
+			
+		#undef SKIN_DECLARE_ARG
+		#define SKIN_DECLARE_ARG(_R_, _ARG_, _NAME_) \
+			lua_getfield(L, Index, #_NAME_); \
+			if(lua_isfunction(L, -1)) \
+				_p ## _NAME_ = new lua_function_reference<_R_(_ARG_)>(L, -1); \
+			lua_pop(L, 1);
+		
+		SKIN_DECLARE(Colour, Canvas);
+		SKIN_DECLARE(Colour, LabelForeground);
+		SKIN_DECLARE(Colour, LabelForegroundFocused);
+		SKIN_DECLARE(Colour, WindowBorder);
+		SKIN_DECLARE(Colour, WindowBackground);
+		SKIN_DECLARE(Colour, WindowForeground);
+		SKIN_DECLARE(Colour, WindowForegroundShine);
+		SKIN_DECLARE(char32_t, WindowTitleLeftChar);
+		SKIN_DECLARE(char32_t, WindowTitleRightChar);
+		SKIN_DECLARE(Colour, ScrollForeground);
+		SKIN_DECLARE(Colour, ScrollForegroundFocused);
+		SKIN_DECLARE(Colour, ScrollBackground);
+		SKIN_DECLARE(Colour, TextBoxForeground);
+		SKIN_DECLARE(Colour, TextBoxForegroundFocused);
+		SKIN_DECLARE(Colour, TextBoxBackground);
+		SKIN_DECLARE_ARG(Colour, double, ProgressBarForeground);
+		SKIN_DECLARE_ARG(Colour, double, ProgressBarBackground);
+		SKIN_DECLARE_ARG(Colour, double, ProgressBarPercent);
+		
+		/*
+		lua_getfield(L, Index, "Canvas");
+		if(lua_isfunction(L, -1))
+			_pCanvas = new lua_function_reference<Colour()>(L, -1);
+		lua_pop(L, 1);
+		*/		
+	}
+	
+	~LuaSkin()
+	{
+		#undef SKIN_DECLARE
+		#define SKIN_DECLARE(_R_, _NAME_) \
+			if(_p ## _NAME_) \
+				delete _p ## _NAME_;
+			
+		#undef SKIN_DECLARE_ARG
+		#define SKIN_DECLARE_ARG(_R_, _ARG_, _NAME_) \
+			if(_p ## _NAME_) \
+				delete _p ## _NAME_;
+		
+		SKIN_DECLARE(Colour, Canvas);
+		SKIN_DECLARE(Colour, LabelForeground);
+		SKIN_DECLARE(Colour, LabelForegroundFocused);
+		SKIN_DECLARE(Colour, WindowBorder);
+		SKIN_DECLARE(Colour, WindowBackground);
+		SKIN_DECLARE(Colour, WindowForeground);
+		SKIN_DECLARE(Colour, WindowForegroundShine);
+		SKIN_DECLARE(char32_t, WindowTitleLeftChar);
+		SKIN_DECLARE(char32_t, WindowTitleRightChar);
+		SKIN_DECLARE(Colour, ScrollForeground);
+		SKIN_DECLARE(Colour, ScrollForegroundFocused);
+		SKIN_DECLARE(Colour, ScrollBackground);
+		SKIN_DECLARE(Colour, TextBoxForeground);
+		SKIN_DECLARE(Colour, TextBoxForegroundFocused);
+		SKIN_DECLARE(Colour, TextBoxBackground);
+		SKIN_DECLARE_ARG(Colour, double, ProgressBarForeground);
+		SKIN_DECLARE_ARG(Colour, double, ProgressBarBackground);
+		SKIN_DECLARE_ARG(Colour, double, ProgressBarPercent);
+		
+	}
+	
+	#undef SKIN_DECLARE
+	#define SKIN_DECLARE(_R_, _NAME_) \
+	virtual _R_ _NAME_ ( ) const \
+	{ \
+		if( _p ## _NAME_ == nullptr ) \
+			return _R_(); \
+		else \
+			return (*_p ## _NAME_)( ); \
+	}
+	
+	#undef SKIN_DECLARE_ARG
+	#define SKIN_DECLARE_ARG(_R_, _ARG_, _NAME_) \
+	virtual _R_ _NAME_ ( _ARG_ arg ) const \
+	{ \
+		if( _p ## _NAME_ == nullptr ) \
+			return _R_(); \
+		else \
+			return (*_p ## _NAME_)( arg ); \
+	}
+	
+	SKIN_DECLARE(Colour, Canvas);
+	SKIN_DECLARE(Colour, LabelForeground);
+	SKIN_DECLARE(Colour, LabelForegroundFocused);
+	SKIN_DECLARE(Colour, WindowBorder);
+	SKIN_DECLARE(Colour, WindowBackground);
+	SKIN_DECLARE(Colour, WindowForeground);
+	SKIN_DECLARE(Colour, WindowForegroundShine);
+	SKIN_DECLARE(char32_t, WindowTitleLeftChar);
+	SKIN_DECLARE(char32_t, WindowTitleRightChar);
+	SKIN_DECLARE(Colour, ScrollForeground);
+	SKIN_DECLARE(Colour, ScrollForegroundFocused);
+	SKIN_DECLARE(Colour, ScrollBackground);
+	SKIN_DECLARE(Colour, TextBoxForeground);
+	SKIN_DECLARE(Colour, TextBoxForegroundFocused);
+	SKIN_DECLARE(Colour, TextBoxBackground);
+	SKIN_DECLARE_ARG(Colour, double, ProgressBarForeground);
+	SKIN_DECLARE_ARG(Colour, double, ProgressBarBackground);
+	SKIN_DECLARE_ARG(Colour, double, ProgressBarPercent);
+	
+	#undef SKIN_DECLARE
+	#undef SKIN_DECLARE_ARG
+};
+
+
 // IConsoleRenderer
 int consor_console_renderer_ctor(lua_State* L)
 {
@@ -468,6 +623,35 @@ int consor_windowsystem_requestcolour(lua_State* L)
 	Colour ret = WindowSystem::RequestColour(col, make);
 	Stack<Colour>::Push(L, ret);
 	return 1;
+}
+
+int consor_windowsystem_setskin(lua_State* L)
+{
+	lua_check(L, Stack<string>::Check(L, 1) || lua_istable(L, 1), "argument #1 expected string or table");
+	
+	if(Stack<string>::Check(L, 1))
+	{
+		string skin = Stack<string>::Get(L, 1);
+		
+		if(skin == "Default")
+			WindowSystem::SetSkin<DefaultSkin>();
+		else if(skin == "Mono")
+			WindowSystem::SetSkin<MonoSkin>();
+		else if(skin == "Hacker")
+			WindowSystem::SetSkin<HackerSkin>();
+		else
+		{
+			lua_pushstring(L, ("Unknown skin named " + skin).c_str());
+			lua_error(L);
+		}
+	}
+	else
+	{
+		auto ptr = std::make_shared<LuaSkin>(WindowSystem::Renderer(), L, 1);
+		WindowSystem::SetSkin(ptr);
+	}
+	
+	return 0;
 }
 
 // Util
@@ -976,6 +1160,7 @@ static const luaL_Reg R[] =
 	FUNC(consor_windowsystem_renderername),
 	FUNC(consor_windowsystem_rendererversionstring),
 	FUNC(consor_windowsystem_requestcolour),
+	FUNC(consor_windowsystem_setskin),
 	
 	// Util
 	FUNC(consor_util_log),

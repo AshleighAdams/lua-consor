@@ -252,6 +252,45 @@ struct Stack<std::string>
 };
 
 
+template <>
+struct Stack<char>
+{
+	static char Get(lua_State* L, int Index)
+	{
+		return lua_tostring(L, Index)[0];
+	}
+	
+	static bool Check(lua_State* L, int Index)
+	{
+		return lua_isstring(L, Index) == 1;
+	}
+	
+	static void Push(lua_State* L, char Value)
+	{
+		string str = ""; str += Value;
+		lua_pushstring(L, str.c_str());
+	}
+};
+
+template <>
+struct Stack<char32_t>
+{
+	static char32_t Get(lua_State* L, int Index)
+	{
+		return (char32_t)lua_tointeger(L, Index);
+	}
+	
+	static char32_t Check(lua_State* L, int Index)
+	{
+		return lua_isnumber(L, Index) == 1;
+	}
+	
+	static void Push(lua_State* L, char32_t Value)
+	{
+		lua_pushinteger(L, Value);
+	}
+};
+
 // Boolean
 
 template <>

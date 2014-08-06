@@ -29,6 +29,7 @@ local renderer = Consor.Console.ConsoleRenderer()
 local input = Consor.Input.InputSystem()
 
 Consor.WindowSystem.Setup(renderer, input)
+Consor.WindowSystem.SetSkin("Mono")
 
 local corefuncs = {}
 for k,v in pairs(Consor.core) do
