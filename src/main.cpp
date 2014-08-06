@@ -44,7 +44,7 @@ using namespace Consor::Input;
 class LuaSkin : public ISkin
 {
 	lua_State* L;
-	
+	shared_ptr<ISkin> _BaseSkin;
 	#define SKIN_DECLARE(_R_, _NAME_) \
 		lua_function_reference<_R_()>* _p ## _NAME_ {nullptr};
 	
@@ -71,8 +71,9 @@ class LuaSkin : public ISkin
 	SKIN_DECLARE_ARG(Colour, double, ProgressBarPercent);
 	
 public:
-	LuaSkin(IConsoleRenderer& Renderer, lua_State* l, int Index) : ISkin(Renderer),
-		L(l)
+	LuaSkin(IConsoleRenderer& Renderer, lua_State* l, int Index, shared_ptr<ISkin> BaseSkin = nullptr) : ISkin(Renderer),
+		L(l),
+		_BaseSkin(BaseSkin)
 	{
 		if(!lua_istable(L, Index))
 			throw std::runtime_error("Value at Index is not a table!");
@@ -156,7 +157,7 @@ public:
 	virtual _R_ _NAME_ ( ) const \
 	{ \
 		if( _p ## _NAME_ == nullptr ) \
-			return _R_(); \
+			return _BaseSkin == nullptr ? _R_() : _BaseSkin-> _NAME_ (); \
 		else \
 			return (*_p ## _NAME_)( ); \
 	}
@@ -166,7 +167,7 @@ public:
 	virtual _R_ _NAME_ ( _ARG_ arg ) const \
 	{ \
 		if( _p ## _NAME_ == nullptr ) \
-			return _R_(); \
+			return _BaseSkin == nullptr ? _R_() : _BaseSkin-> _NAME_ ( arg ); \
 		else \
 			return (*_p ## _NAME_)( arg ); \
 	}
@@ -647,7 +648,26 @@ int consor_windowsystem_setskin(lua_State* L)
 	}
 	else
 	{
-		auto ptr = std::make_shared<LuaSkin>(WindowSystem::Renderer(), L, 1);
+		shared_ptr<ISkin> base = nullptr;
+		
+		if(Stack<string>::Check(L, 2))
+		{
+			string skin = Stack<string>::Get(L, 2);
+			
+			if(skin == "Default")
+				base = std::make_shared<DefaultSkin>(WindowSystem::Renderer());
+			else if(skin == "Mono")
+				base = std::make_shared<MonoSkin>(WindowSystem::Renderer());
+			else if(skin == "Hacker")
+				base = std::make_shared<HackerSkin>(WindowSystem::Renderer());
+			else
+			{
+				lua_pushstring(L, ("Unknown skin named " + skin).c_str());
+				lua_error(L);
+			}
+		}
+		
+		auto ptr = std::make_shared<LuaSkin>(WindowSystem::Renderer(), L, 1, base);
 		WindowSystem::SetSkin(ptr);
 	}
 	
@@ -1109,6 +1129,77 @@ int consor_checkbox_onvaluechanged(lua_State* L)
 	return 0;
 }
 
+// Graph
+int consor_graph_ctor(lua_State* L)
+{
+	lua_check(L, Stack<double>::Check(L, 1), "argument #1 expected number");
+	double height = Stack<double>::Get(L, 1);
+	int handel = Object<Graph>::Make(height);
+	Stack<int>::Push(L, handel);
+	return 1;
+}
+
+int consor_graph_dtor(lua_State* L)
+{
+	int handel = Stack<int>::Get(L, 1);
+	Object<Graph>::Destroy(handel);
+	return 0;
+}
+
+int consor_graph_addbar(lua_State* L)
+{
+	Graph* self = Object<Graph>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected graph");
+	lua_check(L, Stack<double>::Check(L, 2), "argument #2 expected number");
+	
+	self->AddBar( Stack<double>::Get(L, 2) );
+	return 0;
+}
+
+int consor_graph_setxlabel(lua_State* L)
+{
+	Graph* self = Object<Graph>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected graph");
+	lua_check(L, Stack<string>::Check(L, 2), "argument #2 expected string");
+	
+	self->SetXLabel( Stack<string>::Get(L, 2) );
+	return 0;
+}
+
+int consor_graph_setylabel(lua_State* L)
+{
+	Graph* self = Object<Graph>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected graph");
+	lua_check(L, Stack<string>::Check(L, 2), "argument #2 expected string");
+	
+	self->SetYLabel( Stack<string>::Get(L, 2) );
+	return 0;
+}
+
+int consor_graph_addxaxisnotch(lua_State* L)
+{
+	Graph* self = Object<Graph>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected graph");
+	lua_check(L, Stack<string>::Check(L, 2), "argument #2 expected string");
+	lua_check(L, Stack<double>::Check(L, 3), "argument #3 expected number");
+	
+	self->AddXAxisNotch( Stack<string>::Get(L, 2), Stack<double>::Get(L, 3) );
+	return 0;
+}
+
+int consor_graph_onclick(lua_State* L)
+{
+	Graph* self = Object<Graph>::Get(Stack<int>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected graph");
+	lua_check(L, lua_isfunction(L, 2), "argument #2 expected function");
+	
+	lua_function_reference<void(size_t, double)> func(L, 2);
+	
+	auto handle = self->Click += func;
+	handle->DontUnregister();
+	return 0;
+}
+
 #define FUNC(_x_) { #_x_, &_x_ }
 static const luaL_Reg R[] =
 {
@@ -1217,6 +1308,15 @@ static const luaL_Reg R[] =
 	FUNC(consor_checkbox_setchecked),
 	FUNC(consor_checkbox_onvaluechanged),
 	
+	// Graph
+	FUNC(consor_graph_ctor),
+	FUNC(consor_graph_dtor),
+	FUNC(consor_graph_addbar),
+	FUNC(consor_graph_setxlabel),
+	FUNC(consor_graph_setylabel),
+	FUNC(consor_graph_addxaxisnotch),
+	FUNC(consor_graph_onclick),
+		
 	//FUNC(consor_console_renderer_),
 	{ NULL, NULL } //   
 };
