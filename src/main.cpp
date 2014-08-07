@@ -206,14 +206,14 @@ int consor_console_renderer_ctor(lua_State* L)
 
 int consor_console_renderer_dtor(lua_State* L)
 {
-	int renderer = Stack<int>::Get(L, 1);
+	int renderer = Stack<Handle>::Get(L, 1);
 	Object<PlatformConsoleRenderer>::Destroy(renderer);
 	return 0;
 }
 
 int consor_console_renderer_renderername(lua_State* L)
 {
-	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
 	
 	string ret = renderer->RendererName();
@@ -223,7 +223,7 @@ int consor_console_renderer_renderername(lua_State* L)
 
 int consor_console_renderer_versionstring(lua_State* L)
 {
-	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
 	
 	string ret = renderer->VersionString();
@@ -233,7 +233,7 @@ int consor_console_renderer_versionstring(lua_State* L)
 
 int consor_console_renderer_flushtoscreen(lua_State* L)
 {
-	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
 	
 	renderer->FlushToScreen();
@@ -244,7 +244,7 @@ int consor_console_renderer_flushtoscreen(lua_State* L)
 
 int consor_console_renderer_getsize(lua_State* L)
 {
-	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
 	
 	Stack<Size>::Push(L, renderer->GetSize());
@@ -253,7 +253,7 @@ int consor_console_renderer_getsize(lua_State* L)
 
 int consor_console_renderer_supportsunicode(lua_State* L)
 {
-	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
 	
 	Stack<bool>::Push(L, renderer->SupportsUnicode());
@@ -262,7 +262,7 @@ int consor_console_renderer_supportsunicode(lua_State* L)
 
 int consor_console_renderer_maxcolours(lua_State* L)
 {
-	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
 	
 	Stack<size_t>::Push(L, renderer->MaxColours());
@@ -275,7 +275,7 @@ int consor_console_renderer_maxcolours(lua_State* L)
 
 int consor_console_renderer_resetcolours(lua_State* L)
 {
-	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
 	
 	renderer->ResetColours();
@@ -284,7 +284,7 @@ int consor_console_renderer_resetcolours(lua_State* L)
 
 int consor_console_renderer_requestcolour(lua_State* L)
 {
-	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
 	lua_check(L, Stack<Colour>::Check(L, 2), "argument #2 expected colour");
 	
@@ -297,7 +297,7 @@ int consor_console_renderer_requestcolour(lua_State* L)
 
 int consor_console_renderer_flushrequestedcolours(lua_State* L)
 {
-	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
 	
 	renderer->FlushRequestedColours();
@@ -306,7 +306,7 @@ int consor_console_renderer_flushrequestedcolours(lua_State* L)
 
 int consor_console_renderer_settitle(lua_State* L)
 {
-	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
 	lua_check(L, Stack<string>::Check(L, 2), "argument #2 expected string");
 	
@@ -317,7 +317,7 @@ int consor_console_renderer_settitle(lua_State* L)
 
 int consor_console_renderer_clear(lua_State* L)
 {
-	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
 	lua_check(L, Stack<Colour>::Check(L, 2), "argument #2 expected colour");
 	
@@ -328,7 +328,7 @@ int consor_console_renderer_clear(lua_State* L)
 
 int consor_console_renderer_drawbox(lua_State* L)
 {
-	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
 	lua_check(L, Stack<Vector>::Check(L, 2), "argument #2 expected vector");
 	lua_check(L, Stack<Size>::Check(L, 3), "argument #3 expected size");
@@ -344,7 +344,7 @@ int consor_console_renderer_drawbox(lua_State* L)
 
 int consor_console_renderer_drawrect(lua_State* L)
 {
-	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
 	lua_check(L, Stack<Vector>::Check(L, 2), "argument #2 expected vector");
 	lua_check(L, Stack<Size>::Check(L, 3), "argument #3 expected size");
@@ -362,7 +362,7 @@ int consor_console_renderer_drawrect(lua_State* L)
 
 int consor_console_renderer_drawstring(lua_State* L)
 {
-	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
 	lua_check(L, Stack<string>::Check(L, 2), "argument #2 expected string");
 	lua_check(L, Stack<Vector>::Check(L, 3), "argument #3 expected vector");
@@ -380,7 +380,7 @@ int consor_console_renderer_drawstring(lua_State* L)
 
 int consor_console_renderer_pushrenderbounds(lua_State* L)
 {
-	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
 	lua_check(L, Stack<Vector>::Check(L, 2), "argument #2 expected vector");
 	lua_check(L, Stack<Size>::Check(L, 3), "argument #3 expected size");
@@ -394,7 +394,7 @@ int consor_console_renderer_pushrenderbounds(lua_State* L)
 
 int consor_console_renderer_poprenderbounds(lua_State* L)
 {
-	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
 		
 	renderer->PopRenderBounds();
@@ -403,7 +403,7 @@ int consor_console_renderer_poprenderbounds(lua_State* L)
 
 int consor_console_renderer_rendersize(lua_State* L)
 {
-	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
 	
 	Size size = renderer->RenderSize();
@@ -413,7 +413,7 @@ int consor_console_renderer_rendersize(lua_State* L)
 
 int consor_console_renderer_renderoffset(lua_State* L)
 {
-	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
 	
 	Vector pos = renderer->RenderOffset();
@@ -423,7 +423,7 @@ int consor_console_renderer_renderoffset(lua_State* L)
 
 int consor_console_renderer_inrenderbounds(lua_State* L)
 {
-	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
 	lua_check(L, Stack<Vector>::Check(L, 2), "argument #2 expected vector");
 	
@@ -458,14 +458,14 @@ int consor_input_inputsystem_ctor(lua_State* L)
 
 int consor_input_inputsystem_dtor(lua_State* L)
 {
-	int system = Stack<int>::Get(L, 1);
+	int system = Stack<Handle>::Get(L, 1);
 	Object<PlatformInputSystem>::Destroy(system);
 	return 0;
 }
 
 int consor_input_inputsystem_keywaiting(lua_State* L)
 {
-	IInputSystem* input = Object<IInputSystem>::Get(Stack<int>::Get(L, 1));
+	IInputSystem* input = Object<IInputSystem>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, input, "argument #1 expected InputSystem");
 	
 	Stack<bool>::Push(L, input->KeyWaiting());
@@ -474,7 +474,7 @@ int consor_input_inputsystem_keywaiting(lua_State* L)
 
 int consor_input_inputsystem_getkeypress(lua_State* L)
 {
-	IInputSystem* input = Object<IInputSystem>::Get(Stack<int>::Get(L, 1));
+	IInputSystem* input = Object<IInputSystem>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, input, "argument #1 expected InputSystem");
 	
 	Stack<int>::Push(L, input->GetKeyPress());
@@ -483,7 +483,7 @@ int consor_input_inputsystem_getkeypress(lua_State* L)
 
 int consor_input_inputsystem_controldown(lua_State* L)
 {
-	IInputSystem* input = Object<IInputSystem>::Get(Stack<int>::Get(L, 1));
+	IInputSystem* input = Object<IInputSystem>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, input, "argument #1 expected InputSystem");
 	
 	Stack<bool>::Push(L, input->ControlDown());
@@ -492,7 +492,7 @@ int consor_input_inputsystem_controldown(lua_State* L)
 
 int consor_input_inputsystem_shiftdown(lua_State* L)
 {
-	IInputSystem* input = Object<IInputSystem>::Get(Stack<int>::Get(L, 1));
+	IInputSystem* input = Object<IInputSystem>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, input, "argument #1 expected InputSystem");
 	
 	Stack<bool>::Push(L, input->ShiftDown());
@@ -502,10 +502,10 @@ int consor_input_inputsystem_shiftdown(lua_State* L)
 // WindowSystem
 int consor_windowsystem_setup(lua_State* L)
 {
-	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 1));
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, renderer, "argument #1 expected ConsoleRenderer");
 	
-	IInputSystem* input = Object<IInputSystem>::Get(Stack<int>::Get(L, 2));
+	IInputSystem* input = Object<IInputSystem>::Get(Stack<Handle>::Get(L, 2));
 	lua_check(L, input, "argument #2 expected InputSystem");
 	
 	WindowSystem::Setup(renderer, input);
@@ -543,17 +543,17 @@ int consor_windowsystem_handleinput(lua_State* L)
 {
 	lua_check(L, Stack<int>::Check(L, 1), "argument #1 expected number");
 	
-	IInputSystem* input = Object<IInputSystem>::Get(Stack<int>::Get(L, 2));
+	IInputSystem* input = Object<IInputSystem>::Get(Stack<Handle>::Get(L, 2));
 	lua_check(L, input, "argument #2 expected InputSystem");
 	
-	int key = Stack<int>::Get(L, 1);
+	int key = Stack<Handle>::Get(L, 1);
 	WindowSystem::HandleInput((Key)key, *input);
 	return 0;
 }
 
 int consor_windowsystem_registerwindow(lua_State* L)
 {
-	Control* ctrl = Object<Control>::Get(Stack<int>::Get(L, 1));
+	Control* ctrl = Object<Control>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, ctrl, "argument #1 expected Control");
 	lua_check(L, Stack<Vector>::Check(L, 2), "argument #2 expected vector");
 	
@@ -565,7 +565,7 @@ int consor_windowsystem_registerwindow(lua_State* L)
 
 int consor_windowsystem_unregisterwindow(lua_State* L)
 {
-	Control* ctrl = Object<Control>::Get(Stack<int>::Get(L, 1));
+	Control* ctrl = Object<Control>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, ctrl, "argument #1 expected Control");
 	
 	WindowSystem::UnregisterWindow(*ctrl);
@@ -574,7 +574,7 @@ int consor_windowsystem_unregisterwindow(lua_State* L)
 
 int consor_windowsystem_registerhotkey(lua_State* L)
 {
-	Control* ctrl = Object<Control>::Get(Stack<int>::Get(L, 1)); // can be nullptr
+	Control* ctrl = Object<Control>::Get(Stack<Handle>::Get(L, 1)); // can be nullptr
 	
 	lua_check(L, Stack<int>::Check(L, 2), "argument #2 expected number");
 	lua_check(L, Stack<bool>::Check(L, 3), "argument #3 expected boolean");
@@ -798,14 +798,14 @@ int consor_util_sleep(lua_State* L)
 // Control bindings
 int consor_control_dtor(lua_State* L)
 {
-	int renderer = Stack<int>::Get(L, 1);
+	int renderer = Stack<Handle>::Get(L, 1);
 	Object<Control>::Destroy(renderer);
 	return 0;
 }
 
 int consor_control_getsize(lua_State* L)
 {
-	Control* ctrl = Object<Control>::Get(Stack<int>::Get(L, 1));
+	Control* ctrl = Object<Control>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, ctrl, "argument #1 expected control");
 	
 	Stack<Size>::Push(L, ctrl->GetSize());
@@ -814,7 +814,7 @@ int consor_control_getsize(lua_State* L)
 
 int consor_control_onresize(lua_State* L)
 {
-	Control* ctrl = Object<Control>::Get(Stack<int>::Get(L, 1));
+	Control* ctrl = Object<Control>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, ctrl, "argument #1 expected control");
 	lua_check(L, Stack<Size>::Check(L, 2), "argument #2 expected size");
 	
@@ -825,7 +825,7 @@ int consor_control_onresize(lua_State* L)
 
 int consor_control_forceresize(lua_State* L)
 {
-	Control* ctrl = Object<Control>::Get(Stack<int>::Get(L, 1));
+	Control* ctrl = Object<Control>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, ctrl, "argument #1 expected control");
 	lua_check(L, Stack<Size>::Check(L, 2), "argument #2 expected size");
 	
@@ -836,9 +836,9 @@ int consor_control_forceresize(lua_State* L)
 
 int consor_control_draw(lua_State* L)
 {
-	Control* ctrl = Object<Control>::Get(Stack<int>::Get(L, 1));
-	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<int>::Get(L, 2));
-	ISkin* skin = Object<ISkin>::Get(Stack<int>::Get(L, 4));
+	Control* ctrl = Object<Control>::Get(Stack<Handle>::Get(L, 1));
+	IConsoleRenderer* renderer = Object<IConsoleRenderer>::Get(Stack<Handle>::Get(L, 2));
+	ISkin* skin = Object<ISkin>::Get(Stack<Handle>::Get(L, 4));
 	
 	lua_check(L, ctrl, "argument #1 expected control");
 	lua_check(L, renderer, "argument #2 expected renderer");
@@ -852,8 +852,8 @@ int consor_control_draw(lua_State* L)
 
 int consor_control_handleinput(lua_State* L)
 {
-	Control* ctrl = Object<Control>::Get(Stack<int>::Get(L, 1));
-	IInputSystem* input = Object<IInputSystem>::Get(Stack<int>::Get(L, 3));
+	Control* ctrl = Object<Control>::Get(Stack<Handle>::Get(L, 1));
+	IInputSystem* input = Object<IInputSystem>::Get(Stack<Handle>::Get(L, 3));
 	lua_check(L, ctrl, "argument #1 expected control");
 	lua_check(L, Stack<int>::Check(L, 2), "argument #2 expected key");
 	lua_check(L, input, "argument #3 expected inputsystem");
@@ -865,7 +865,7 @@ int consor_control_handleinput(lua_State* L)
 
 int consor_control_canfocus(lua_State* L)
 {
-	Control* ctrl = Object<Control>::Get(Stack<int>::Get(L, 1));
+	Control* ctrl = Object<Control>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, ctrl, "argument #1 expected control");
 	
 	Stack<bool>::Push(L, ctrl->CanFocus());
@@ -877,7 +877,7 @@ int consor_control_canfocus(lua_State* L)
 // AlignContainer
 int consor_aligncontainer_ctor(lua_State* L)
 {
-	Control* client = Object<Control>::Get(Stack<int>::Get(L, 1));
+	Control* client = Object<Control>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, client, "argument #1 expected control");
 	lua_check(L, Stack<int>::Check(L, 2), "argument #2 expected number");
 	lua_check(L, Stack<int>::Check(L, 3), "argument #3 expected number");
@@ -898,7 +898,7 @@ int consor_aligncontainer_getsize(lua_State* L)
 // BorderContainer
 int consor_bordercontainer_ctor(lua_State* L)
 {
-	Control* client = Object<Control>::Get(Stack<int>::Get(L, 1));
+	Control* client = Object<Control>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, client, "argument #1 expected control");
 	
 	if(lua_gettop(L) == 2) // client, border
@@ -943,8 +943,8 @@ int consor_flowcontainer_ctor(lua_State* L)
 
 int consor_flowcontainer_addcontrol(lua_State* L)
 {
-	FlowContainer* self = Object<FlowContainer>::Get(Stack<int>::Get(L, 1));
-	Control* ctrl = Object<Control>::Get(Stack<int>::Get(L, 2));
+	FlowContainer* self = Object<FlowContainer>::Get(Stack<Handle>::Get(L, 1));
+	Control* ctrl = Object<Control>::Get(Stack<Handle>::Get(L, 2));
 	lua_check(L, self, "argument #1 expected flowcontainer");
 	lua_check(L, ctrl, "argument #1 expected control");
 		
@@ -956,7 +956,7 @@ int consor_flowcontainer_addcontrol(lua_State* L)
 // ScrollContainer
 int consor_scrollcontainer_ctor(lua_State* L)
 {
-	Control* client = Object<Control>::Get(Stack<int>::Get(L, 1));
+	Control* client = Object<Control>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, client, "argument #1 expected control");
 	lua_check(L, Stack<string>::Check(L, 2), "argument #2 expected size");
 	
@@ -969,7 +969,7 @@ int consor_scrollcontainer_ctor(lua_State* L)
 
 int consor_scrollcontainer_scrollleft(lua_State* L)
 {
-	ScrollContainer* self = Object<ScrollContainer>::Get(Stack<int>::Get(L, 1));
+	ScrollContainer* self = Object<ScrollContainer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, self, "argument #1 expected scrollcontainer");
 	
 	size_t count = Stack<size_t>::Check(L, 2) ? Stack<size_t>::Get(L, 2) : 1;
@@ -979,7 +979,7 @@ int consor_scrollcontainer_scrollleft(lua_State* L)
 
 int consor_scrollcontainer_scrollright(lua_State* L)
 {
-	ScrollContainer* self = Object<ScrollContainer>::Get(Stack<int>::Get(L, 1));
+	ScrollContainer* self = Object<ScrollContainer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, self, "argument #1 expected scrollcontainer");
 	
 	size_t count = Stack<size_t>::Check(L, 2) ? Stack<size_t>::Get(L, 2) : 1;
@@ -989,7 +989,7 @@ int consor_scrollcontainer_scrollright(lua_State* L)
 
 int consor_scrollcontainer_scrollup(lua_State* L)
 {
-	ScrollContainer* self = Object<ScrollContainer>::Get(Stack<int>::Get(L, 1));
+	ScrollContainer* self = Object<ScrollContainer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, self, "argument #1 expected scrollcontainer");
 	
 	size_t count = Stack<size_t>::Check(L, 2) ? Stack<size_t>::Get(L, 2) : 1;
@@ -999,7 +999,7 @@ int consor_scrollcontainer_scrollup(lua_State* L)
 
 int consor_scrollcontainer_scrolldown(lua_State* L)
 {
-	ScrollContainer* self = Object<ScrollContainer>::Get(Stack<int>::Get(L, 1));
+	ScrollContainer* self = Object<ScrollContainer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, self, "argument #1 expected scrollcontainer");
 	
 	size_t count = Stack<size_t>::Check(L, 2) ? Stack<size_t>::Get(L, 2) : 1;
@@ -1010,7 +1010,7 @@ int consor_scrollcontainer_scrolldown(lua_State* L)
 // WindowContainer
 int consor_windowcontainer_ctor(lua_State* L)
 {
-	Control* client = Object<Control>::Get(Stack<int>::Get(L, 1));
+	Control* client = Object<Control>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, client, "argument #1 expected control");
 	lua_check(L, Stack<string>::Check(L, 2), "argument #2 expected string");
 	
@@ -1026,7 +1026,7 @@ int consor_windowcontainer_ctor(lua_State* L)
 
 int consor_windowcontainer_show(lua_State* L)
 {
-	WindowContainer* self = Object<WindowContainer>::Get(Stack<int>::Get(L, 1));
+	WindowContainer* self = Object<WindowContainer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, self, "argument #1 expected windowcontainer");
 	
 	if(Stack<Vector>::Check(L, 2))
@@ -1038,7 +1038,7 @@ int consor_windowcontainer_show(lua_State* L)
 
 int consor_windowcontainer_close(lua_State* L)
 {
-	WindowContainer* self = Object<WindowContainer>::Get(Stack<int>::Get(L, 1));
+	WindowContainer* self = Object<WindowContainer>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, self, "argument #1 expected windowcontainer");
 	self->Close();
 	return 0;
@@ -1056,7 +1056,7 @@ int consor_button_ctor(lua_State* L)
 
 int consor_button_settext(lua_State* L)
 {
-	Button* self = Object<Button>::Get(Stack<int>::Get(L, 1));
+	Button* self = Object<Button>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, self, "argument #1 expected button");
 	lua_check(L, Stack<string>::Check(L, 2), "argument #2 expected string");
 	
@@ -1067,7 +1067,7 @@ int consor_button_settext(lua_State* L)
 
 int consor_button_onclick(lua_State* L)
 {
-	Button* self = Object<Button>::Get(Stack<int>::Get(L, 1));
+	Button* self = Object<Button>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, self, "argument #1 expected button");
 	lua_check(L, lua_isfunction(L, 2), "argument #2 expected function");
 	
@@ -1088,7 +1088,7 @@ int consor_checkbox_ctor(lua_State* L)
 
 int consor_checkbox_settext(lua_State* L)
 {
-	CheckBox* self = Object<CheckBox>::Get(Stack<int>::Get(L, 1));
+	CheckBox* self = Object<CheckBox>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, self, "argument #1 expected checkbox");
 	lua_check(L, Stack<string>::Check(L, 2), "argument #2 expected string");
 	
@@ -1099,7 +1099,7 @@ int consor_checkbox_settext(lua_State* L)
 
 int consor_checkbox_checked(lua_State* L)
 {
-	CheckBox* self = Object<CheckBox>::Get(Stack<int>::Get(L, 1));
+	CheckBox* self = Object<CheckBox>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, self, "argument #1 expected checkbox");
 	
 	Stack<bool>::Push(L, self->Checked() );
@@ -1108,7 +1108,7 @@ int consor_checkbox_checked(lua_State* L)
 
 int consor_checkbox_setchecked(lua_State* L)
 {
-	CheckBox* self = Object<CheckBox>::Get(Stack<int>::Get(L, 1));
+	CheckBox* self = Object<CheckBox>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, self, "argument #1 expected checkbox");
 	lua_check(L, Stack<bool>::Check(L, 2), "argument #2 expected boolean");
 	
@@ -1118,7 +1118,7 @@ int consor_checkbox_setchecked(lua_State* L)
 
 int consor_checkbox_onvaluechanged(lua_State* L)
 {
-	CheckBox* self = Object<CheckBox>::Get(Stack<int>::Get(L, 1));
+	CheckBox* self = Object<CheckBox>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, self, "argument #1 expected checkbox");
 	lua_check(L, lua_isfunction(L, 2), "argument #2 expected function");
 	
@@ -1141,14 +1141,14 @@ int consor_graph_ctor(lua_State* L)
 
 int consor_graph_dtor(lua_State* L)
 {
-	int handel = Stack<int>::Get(L, 1);
+	int handel = Stack<Handle>::Get(L, 1);
 	Object<Graph>::Destroy(handel);
 	return 0;
 }
 
 int consor_graph_addbar(lua_State* L)
 {
-	Graph* self = Object<Graph>::Get(Stack<int>::Get(L, 1));
+	Graph* self = Object<Graph>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, self, "argument #1 expected graph");
 	lua_check(L, Stack<double>::Check(L, 2), "argument #2 expected number");
 	
@@ -1158,7 +1158,7 @@ int consor_graph_addbar(lua_State* L)
 
 int consor_graph_setxlabel(lua_State* L)
 {
-	Graph* self = Object<Graph>::Get(Stack<int>::Get(L, 1));
+	Graph* self = Object<Graph>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, self, "argument #1 expected graph");
 	lua_check(L, Stack<string>::Check(L, 2), "argument #2 expected string");
 	
@@ -1168,7 +1168,7 @@ int consor_graph_setxlabel(lua_State* L)
 
 int consor_graph_setylabel(lua_State* L)
 {
-	Graph* self = Object<Graph>::Get(Stack<int>::Get(L, 1));
+	Graph* self = Object<Graph>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, self, "argument #1 expected graph");
 	lua_check(L, Stack<string>::Check(L, 2), "argument #2 expected string");
 	
@@ -1178,7 +1178,7 @@ int consor_graph_setylabel(lua_State* L)
 
 int consor_graph_addxaxisnotch(lua_State* L)
 {
-	Graph* self = Object<Graph>::Get(Stack<int>::Get(L, 1));
+	Graph* self = Object<Graph>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, self, "argument #1 expected graph");
 	lua_check(L, Stack<string>::Check(L, 2), "argument #2 expected string");
 	lua_check(L, Stack<double>::Check(L, 3), "argument #3 expected number");
@@ -1189,7 +1189,7 @@ int consor_graph_addxaxisnotch(lua_State* L)
 
 int consor_graph_onclick(lua_State* L)
 {
-	Graph* self = Object<Graph>::Get(Stack<int>::Get(L, 1));
+	Graph* self = Object<Graph>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, self, "argument #1 expected graph");
 	lua_check(L, lua_isfunction(L, 2), "argument #2 expected function");
 	

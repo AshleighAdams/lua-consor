@@ -1,6 +1,30 @@
 #!/usr/bin/env lua
+
 local Consor = require("consor")
 
+
+local renderer = Consor.Console.ConsoleRenderer()
+local input = Consor.Input.InputSystem()
+
+Consor.WindowSystem.Setup(renderer, input)
+Consor.WindowSystem.SetSkin("Mono")
+
+local btn = Consor.Button()
+local window = Consor.WindowContainer(btn, "Hi!")
+
+btn:SetText("Hello")
+btn:OnClick(function()
+	btn:SetText("GO 'WAY OR I PUNK YOU A SECOND TIME-A")
+	Consor.Util.Sleep(2.5)
+	window:Close()
+end)
+
+window:Show()
+
+Consor.WindowSystem.Close()
+
+
+--[[
 print = function(...)
 	local args = {...}
 	for k, v in pairs(args) do
@@ -25,51 +49,35 @@ function printtable(tbl, done, depth)
 	end
 end
 
-local renderer = Consor.Console.ConsoleRenderer()
-local input = Consor.Input.InputSystem()
-
-Consor.WindowSystem.Setup(renderer, input)
-Consor.WindowSystem.SetSkin("Mono")
-
-local corefuncs = {}
-for k,v in pairs(Consor.core) do
-	table.insert(corefuncs, k)
+local function ping(host)
+	local cmd = string.format("ping -c 1 -n %s", host or "google.com")
+	local file = io.popen(cmd)
+	local output = file:read("*a") -- read it all
+	local time = output:match("([0-9%.]+) ms")
+	return tonumber(time)
 end
-table.sort(corefuncs)
 
-Consor.Util.ChoiceList("CoreFuncs", "Test", corefuncs)
-if true then return end
+local client = Consor.core.consor_graph_ctor(16+6-2)
 
-Consor.WindowSystem.RegisterHotKey(nil, string.byte("`"), false, false, function()
-	local tmp = {}
-	for k,v in pairs(Consor.core) do
-		table.insert(tmp, k)
-	end
-	
-	table.sort(tmp)
-	
-	for k,v in pairs(tmp) do
-		Consor.Util.Log("Core function: %s", v);
-	end
+Consor.core.consor_graph_setxlabel(client, "X")
+Consor.core.consor_graph_setylabel(client, "Y")
+Consor.core.consor_graph_addxaxisnotch(client, "T", 0.5)
+
+Consor.core.consor_graph_onclick(client, function(x, val)
+	--Consor.Util.MessageBox(string.format("%d ms", val), "T", {"Close"})
 end)
 
-local client = Consor.core.consor_checkbox_ctor()
-Consor.core.consor_checkbox_settext(client, "Hello, world")
+local window = Consor.core.consor_windowcontainer_ctor(client, "Hi!")
 
+Consor.core.consor_windowsystem_registerwindow(client, Consor.Vector(0, 1))
 
+for i = 1, 78 do
+	Consor.core.consor_graph_addbar(client, ping() / 50)
+	Consor.core.consor_windowsystem_draw()
+	Consor.Util.Sleep(0.2)
+end
 
-local window
-Consor.core.consor_checkbox_onvaluechanged(client, function(val)
-	print("checked state: ", val)
-	Consor.Util.Sleep(1.0);
-	Consor.core.consor_windowcontainer_close(window)
-end)
-
-
-window = Consor.core.consor_windowcontainer_ctor(client, "Hi!")
-Consor.core.consor_windowcontainer_show(window)
-
-
-Consor.WindowSystem.Close()
-
-
+Consor.Util.MessageBox("Awesome!", "Done", {"OK"})
+Consor.core.consor_windowsystem_unregisterwindow(client)
+--Consor.core.consor_windowcontainer_show(window)
+]]

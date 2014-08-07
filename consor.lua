@@ -1,11 +1,102 @@
 local core = require("consor.core")
-return {
+
+
+local ControlMetas = {}
+
+local function DeriveControl(name, base, ctor, dtor, funcs)
+	base = ControlMetas[base] or {}
+	
+	local meta = {}
+	meta._ctor = ctor
+	meta._dtor = dtor
+	meta._base = base
+	meta._name = name
+	meta.__index = function(self, name)
+		local basefunc = rawget(meta._base, name)
+		
+		if rawget(meta, name) == nil and basefunc ~= nil then
+			return basefunc
+		else
+			return meta[name]
+		end
+	end
+	
+	meta.__tostring = function(self)
+		return string.format("%s: %d", meta._name, self.handle)
+	end
+	
+	if dtor then -- if a dtor is passed, set it up
+		meta.__gc = function()
+			meta._dtor()
+		end
+	end
+	
+	for funcname_, corefunc_ in pairs(funcs) do
+		local funcname, corefunc = funcname_, corefunc_ -- make copies
+		meta[funcname] = function(self, ...)
+			return corefunc(self.handle, ...)
+		end
+	end
+	
+	ControlMetas[name] = meta
+	
+	if not ctor then -- this control can't be constructed
+		return nil
+	end
+	
+	return function(...)
+		local ctrl = {
+			handle = meta._ctor(...)
+		}
+		return setmetatable(ctrl, meta)
+	end
+end
+
+local Consor; Consor = {
 	core = core,
 	Vector = function(x,y) return {X = x or 0, Y = y or 0} end,
 	Size = function(w,h) return {Width = w or 0, Height = h or 0} end,
 	Colour = function(r,g,b,a) return {R = r or 0, G = g or 0, B = b or 0, A = a or 1} end,
 	
-	WindowSystem = {
+	-- The base control
+	Control = DeriveControl("Control", "", nil, nil, {
+		GetSize = core.consor_control_getsize,
+		OnResize = core.consor_control_onresize,
+		ForceResize = core.consor_control_forceresize,
+		Draw = core.consor_control_draw,
+		HandleInput = core.consor_control_handleinput, -- FIXME: Handle -> Handel
+		CanFocus = core.consor_control_canfocus,
+	}),
+	
+	-- Containers
+	AlignContainer = DeriveControl("AlignContainer", "Control", core.consor_aligncontainer_ctor, nil, {
+		-- no custom methods...
+	}),
+	BorderContainer = DeriveControl("BorderContainer", "Control", core.consor_bordercontainer_ctor, nil, {
+		-- no custom methods...
+	}),
+	FlowContainer = DeriveControl("FlowContainer", "Control", core.consor_flowcontainer_ctor, nil, {
+		AddControl = core.consor_flowcontainer_addcontrol
+	}),
+	ScrollContainer = DeriveControl("ScrollContainer", "Control", core.consor_scrollcontainer_ctor, nil, {
+		ScrollLeft = core.consor_scrollcontainer_scrollleft,
+		ScrollRight = core.consor_scrollcontainer_scrollright,
+		ScrollUp = core.consor_scrollcontainer_scrollup,
+		ScrollDown = core.consor_scrollcontainer_scrolldown
+	}),
+	WindowContainer = DeriveControl("WindowContainer", "Control", core.consor_windowcontainer_ctor, nil, {
+		-- SetTitle = core.consor_windowcontainer_settitle
+		Show = core.consor_windowcontainer_show,
+		Close = core.consor_windowcontainer_close
+	}),
+	
+	-- Controls
+	Button = DeriveControl("Button", "Control", core.consor_button_ctor, nil, {
+		SetText = core.consor_button_settext,
+		OnClick = core.consor_button_onclick,
+	}),
+	
+	WindowSystem = setmetatable({
 		Setup                    = function(renderer, input)                    return core.consor_windowsystem_setup                   (renderer.handle, input.handle) end,
 		Renderer                 = function()                                   return core.consor_windowsystem_renderer                () end,
 		Draw                     = function()                                   return core.consor_windowsystem_draw                    () end,
@@ -21,7 +112,13 @@ return {
 		RendeererVersionString   = function()                                   return core.consor_windowsystem_rendererversionstring   () end,
 		RequestColour            = function(col, make)                          return core.consor_windowsystem_requestcolour           (col, make) end,
 		SetSkin                  = function(skin)                               return core.consor_windowsystem_setskin                 (skin) end,
-	},
+		},
+		{
+			__gc = function()
+				core.consor_windowsystem_close()
+			end
+		}
+	),
 	
 	Util = {
 		Log = function(str, ...)
@@ -104,7 +201,7 @@ return {
 	}
 }
 
-
+return Consor
 --[[
 function meta:XXXX(...)
 	return core.consor_namespace_class_xxxx(self.handle, ...)

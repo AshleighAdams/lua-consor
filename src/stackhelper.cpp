@@ -451,6 +451,46 @@ struct Stack<Colour>
 	}
 };
 
+// Handle
+struct Handle {}; // dummy type, does nothing really
+
+template <>
+struct Stack<Handle>
+{
+	static int Get(lua_State* L, int Index)
+	{	
+		if(lua_istable(L, Index))
+		{
+			lua_getfield(L, Index, "handle");
+			int ret = lua_tonumber(L, -1);
+			lua_pop(L, 1);
+			return ret;
+		}
+		else
+			return lua_tointeger(L, Index);
+	}
+	
+	static bool Check(lua_State* L, int Index)
+	{
+		if(lua_isnumber(L, Index))
+			return true;
+		else if(lua_istable(L, Index))
+		{
+			lua_getfield(L, Index, "handle");
+			bool ret = lua_isnumber(L, -1) == 1;
+			lua_pop(L, 1);
+			return ret;
+		}
+		
+		return false;
+	}
+	
+	static void Push(lua_State* L, int Value)
+	{
+		lua_pushinteger(L, Value);
+	}
+};
+
 
 // Convert a function on the stack at index position to a std::function<void(...)>
 struct lualock
