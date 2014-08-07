@@ -97,15 +97,15 @@ local Consor; Consor = {
 	}),
 	
 	WindowSystem = setmetatable({
-		Setup                    = function(renderer, input)                    return core.consor_windowsystem_setup                   (renderer.handle, input.handle) end,
+		Setup                    = function(renderer, input)                    return core.consor_windowsystem_setup                   (renderer, input) end,
 		Renderer                 = function()                                   return core.consor_windowsystem_renderer                () end,
 		Draw                     = function()                                   return core.consor_windowsystem_draw                    () end,
 		Lock                     = function()                                   return core.consor_windowsystem_lock                    () end,
 		Unlock                   = function()                                   return core.consor_windowsystem_unlock                  () end,
-		HandleInput              = function(key, input)                         return core.consor_windowsystem_handleinput             (key, input.handle) end,
-		RegisterWindow           = function(ctrl, pos)                          return core.consor_windowsystem_registerwindow          (ctrl.handle, pos) end,
-		UnregisterWindow         = function(ctrl)                               return core.consor_windowsystem_unregisterwindow        (ctrl.handle) end,
-		RegisterHotKey           = function(control, key, ctrl, shift, func)    return core.consor_windowsystem_registerhotkey          ((control and control.handle or 0), key, ctrl, shift, func) end,
+		HandleInput              = function(key, input)                         return core.consor_windowsystem_handleinput             (key, input) end,
+		RegisterWindow           = function(ctrl, pos)                          return core.consor_windowsystem_registerwindow          (ctrl, pos) end,
+		UnregisterWindow         = function(ctrl)                               return core.consor_windowsystem_unregisterwindow        (ctrl) end,
+		RegisterHotKey           = function(control, key, ctrl, shift, func)    return core.consor_windowsystem_registerhotkey          ((control and control or 0), key, ctrl, shift, func) end,
 		Running                  = function()                                   return core.consor_windowsystem_running                 () end,
 		Close                    = function()                                   return core.consor_windowsystem_close                   () end,
 		RendererName             = function()                                   return core.consor_windowsystem_renderername            () end,
@@ -141,29 +141,29 @@ local Consor; Consor = {
 			local meta = {}
 			meta.__index = meta
 			
-			function meta:RendererName(...)             return core.consor_console_renderer_renderername            (self.handle, ...) end
-			function meta:VersionString(...)            return core.consor_console_renderer_versionstring           (self.handle, ...) end
-			function meta:FlushToScreen(...)            return core.consor_console_renderer_flushtoscreen           (self.handle, ...) end
-			function meta:GetCharInformation(...)       return core.consor_console_renderer_getcharinformation      (self.handle, ...) end
-			function meta:GetSize(...)                  return core.consor_console_renderer_getsize                 (self.handle, ...) end
-			function meta:GetColours(...) --[[not imp]] return core.consor_console_renderer_getcolours              (self.handle, ...) end
-			function meta:SetColours(...) --[[not imp]]	return core.consor_console_renderer_setcolours              (self.handle, ...) end
-			function meta:ResetColours(...)             return core.consor_console_renderer_resetcolours            (self.handle, ...) end
-			function meta:RequestColour(...)            return core.consor_console_renderer_requestcolour           (self.handle, ...) end
-			function meta:FlushRequestedColours(...)    return core.consor_console_renderer_flushrequestedcolours   (self.handle, ...) end
-			function meta:SetTitle(...)                 return core.consor_console_renderer_settitle                (self.handle, ...) end
-			function meta:Clear(...)                    return core.consor_console_renderer_clear                   (self.handle, ...) end
-			function meta:DrawBox(...)                  return core.consor_console_renderer_drawbox                 (self.handle, ...) end
-			function meta:DrawRect(...)                 return core.consor_console_renderer_drawrect                (self.handle, ...) end
-			function meta:DrawString(...)               return core.consor_console_renderer_drawstring              (self.handle, ...) end
-			function meta:PushRenderBounds(...)         return core.consor_console_renderer_pushrenderbounds        (self.handle, ...) end
-			function meta:PopRenderBounds(...)          return core.consor_console_renderer_poprenderbounds         (self.handle, ...) end
-			function meta:RenderSize(...)               return core.consor_console_renderer_rendersize              (self.handle, ...) end
-			function meta:RenderOffset(...)             return core.consor_console_renderer_renderoffset            (self.handle, ...) end
-			function meta:InRenderBounds(...)           return core.consor_console_renderer_inrenderbounds          (self.handle, ...) end
+			function meta:RendererName(...)             return core.consor_console_renderer_renderername            (self, ...) end
+			function meta:VersionString(...)            return core.consor_console_renderer_versionstring           (self, ...) end
+			function meta:FlushToScreen(...)            return core.consor_console_renderer_flushtoscreen           (self, ...) end
+			function meta:GetCharInformation(...)       return core.consor_console_renderer_getcharinformation      (self, ...) end
+			function meta:GetSize(...)                  return core.consor_console_renderer_getsize                 (self, ...) end
+			function meta:GetColours(...) --[[not imp]] return core.consor_console_renderer_getcolours              (self, ...) end
+			function meta:SetColours(...) --[[not imp]]	return core.consor_console_renderer_setcolours              (self, ...) end
+			function meta:ResetColours(...)             return core.consor_console_renderer_resetcolours            (self, ...) end
+			function meta:RequestColour(...)            return core.consor_console_renderer_requestcolour           (self, ...) end
+			function meta:FlushRequestedColours(...)    return core.consor_console_renderer_flushrequestedcolours   (self, ...) end
+			function meta:SetTitle(...)                 return core.consor_console_renderer_settitle                (self, ...) end
+			function meta:Clear(...)                    return core.consor_console_renderer_clear                   (self, ...) end
+			function meta:DrawBox(...)                  return core.consor_console_renderer_drawbox                 (self, ...) end
+			function meta:DrawRect(...)                 return core.consor_console_renderer_drawrect                (self, ...) end
+			function meta:DrawString(...)               return core.consor_console_renderer_drawstring              (self, ...) end
+			function meta:PushRenderBounds(...)         return core.consor_console_renderer_pushrenderbounds        (self, ...) end
+			function meta:PopRenderBounds(...)          return core.consor_console_renderer_poprenderbounds         (self, ...) end
+			function meta:RenderSize(...)               return core.consor_console_renderer_rendersize              (self, ...) end
+			function meta:RenderOffset(...)             return core.consor_console_renderer_renderoffset            (self, ...) end
+			function meta:InRenderBounds(...)           return core.consor_console_renderer_inrenderbounds          (self, ...) end
 			
 			function meta:__gc()
-				core.consor_console_renderer_dtor(self.handle)
+				core.consor_console_renderer_dtor(self)
 			end
 			return function()
 				local ret = {handle = core.consor_console_renderer_ctor()}
@@ -176,13 +176,13 @@ local Consor; Consor = {
 			local meta = {}
 			meta.__index = meta
 			
-			function meta:KeyWaiting(...)   return core.consor_input_inputsystem_keywaiting    (self.handle, ...) end
-			function meta:GetKeyPress(...)  return core.consor_input_inputsystem_getkeypress   (self.handle, ...) end
-			function meta:ControlDown(...)  return core.consor_input_inputsystem_controldown   (self.handle, ...) end
-			function meta:ShiftDown(...)    return core.consor_input_inputsystem_shiftfown     (self.handle, ...) end
+			function meta:KeyWaiting(...)   return core.consor_input_inputsystem_keywaiting    (self, ...) end
+			function meta:GetKeyPress(...)  return core.consor_input_inputsystem_getkeypress   (self, ...) end
+			function meta:ControlDown(...)  return core.consor_input_inputsystem_controldown   (self, ...) end
+			function meta:ShiftDown(...)    return core.consor_input_inputsystem_shiftfown     (self, ...) end
 			
 			function meta:__gc()
-				core.consor_input_inputsystem_dtor(self.handle)
+				core.consor_input_inputsystem_dtor(self)
 			end
 			return function()
 				local ret = {handle = core.consor_input_inputsystem_ctor()}
@@ -204,6 +204,6 @@ local Consor; Consor = {
 return Consor
 --[[
 function meta:XXXX(...)
-	return core.consor_namespace_class_xxxx(self.handle, ...)
+	return core.consor_namespace_class_xxxx(self, ...)
 end
 ]]
