@@ -64,7 +64,7 @@ local Consor; Consor = {
 		OnResize = core.consor_control_onresize,
 		ForceResize = core.consor_control_forceresize,
 		Draw = core.consor_control_draw,
-		HandleInput = core.consor_control_handleinput, -- FIXME: Handle -> Handel
+		HandleInput = core.consor_control_handleinput,
 		CanFocus = core.consor_control_canfocus,
 	}),
 	
