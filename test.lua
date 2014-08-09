@@ -25,11 +25,15 @@ label:SetText("I'm a label!")
 
 local passbox = Consor.PasswordBox()
 
+local progress = Consor.ProgressBar()
+progress:SetPercent(0.25)
+
 local flow = Consor.FlowContainer(Consor.FlowAxis.Vertical, 0)
 flow:AddControl(button)
 flow:AddControl(checkbox)
 flow:AddControl(label)
 flow:AddControl(passbox)
+flow:AddControl(progress)
 
 window = Consor.WindowContainer(flow, "Test")
 window:Show()

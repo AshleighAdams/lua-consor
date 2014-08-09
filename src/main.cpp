@@ -1315,6 +1315,33 @@ int consor_passwordbox_setpasswordchar(lua_State* L)
 	return 0;
 }
 
+// ProgressBar
+int consor_progressbar_ctor(lua_State* L)
+{
+	int handle = Object<ProgressBar>::Make();
+	Stack<Handle>::Push(L, handle);
+	return 1;
+}
+
+int consor_progressbar_setpercent(lua_State* L)
+{
+	ProgressBar* self = Object<ProgressBar>::Get(Stack<Handle>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected progressbar");
+	lua_check(L, Stack<double>::Check(L, 2), "argument #2 expected number");
+	
+	self->SetPercent( Stack<double>::Get(L, 2) );
+	return 0;
+}
+
+int consor_progressbar_getpercent(lua_State* L)
+{
+	ProgressBar* self = Object<ProgressBar>::Get(Stack<Handle>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected progressbar");
+	
+	Stack<double>::Push(L, self->GetPercent());
+	return 1;
+}
+
 /*
 
 int consor_TYPE_ctor(lua_State* L)
@@ -1468,6 +1495,11 @@ static const luaL_Reg R[] =
 	FUNC(consor_passwordbox_ctor),
 	FUNC(consor_passwordbox_getpassword),
 	FUNC(consor_passwordbox_setpasswordchar),
+	
+	// PasswordBox
+	FUNC(consor_progressbar_ctor),
+	FUNC(consor_progressbar_getpercent),
+	FUNC(consor_progressbar_setpercent),
 	
 	//FUNC(consor_console_renderer_),
 	{ NULL, NULL } //   

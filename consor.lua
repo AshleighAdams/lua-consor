@@ -141,12 +141,12 @@ local Consor; Consor = {
 		GetPassword = "auto",
 		SetPasswordChar = "auto"
 	}),
-	--[[
+	
 	ProgressBar = DeriveCoreControl("ProgressBar", "Control", {
 		SetPercent = "auto",
 		GetPercent = "auto"
 	}),
-	
+	--[[
 	RadioBox = DeriveCoreControl("RadioBox", "Control", {
 		AddChoice = "auto",
 		GetChoice = "auto",
