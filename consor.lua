@@ -4,11 +4,13 @@ local core = require("consor.core")
 local ControlMetas = {}
 
 local function DeriveCoreControl(name, base, funcs)
-	base = ControlMetas[base] or {}
+	ControlMetas[base] = ControlMetas[base] or {}
+	base = ControlMetas[base]
 	
 	local lowername = name:lower()
 	
-	local meta = {}
+	ControlMetas[name] = ControlMetas[name] or {} -- so if a control derives from us, but is not yet loaded, we use
+	local meta = ControlMetas[name]               -- the existing table created for us (from the start of this function)
 	meta._ctor = core["consor_" .. lowername .. "_ctor"]
 	meta._dtor = core.consor_control_dtor -- this should call any implimentations from the derived virtual dtor
 	meta._base = base
@@ -49,9 +51,7 @@ local function DeriveCoreControl(name, base, funcs)
 			return corefunc(self.handle, ...)
 		end
 	end
-	
-	ControlMetas[name] = meta
-	
+		
 	if not meta._ctor then -- this control can't be constructed
 		core.consor_util_log(name .. " no ctor")
 		return nil
@@ -133,10 +133,51 @@ local Consor; Consor = {
 		OnValueChanged = "auto"
 	}),
 	
+	Label = DeriveCoreControl("Label", "Control", {
+		SetText = "auto"
+	}),
+	
+	PasswordBox = DeriveCoreControl("PasswordBox", "TextBox", {
+		GetPassword = "auto",
+		SetPasswordChar = "auto"
+	}),
+	--[[
+	ProgressBar = DeriveCoreControl("ProgressBar", "Control", {
+		SetPercent = "auto",
+		GetPercent = "auto"
+	}),
+	
+	RadioBox = DeriveCoreControl("RadioBox", "Control", {
+		AddChoice = "auto",
+		GetChoice = "auto",
+		OnValueChanged = "auto",
+	}),
+	
+	TextBox = DeriveCoreControl("TextBox", "Control", {
+		SetText = "auto",
+		GetText = "auto",
+		OnValueChanged = "auto"
+	}),
+	
+	ProgressBar = DeriveCoreControl("VerticalProgressBar", "ProgressBar", {
+		SetGraphMode = "auto",
+		ColourOveride = "auto",
+		OnClick = "auto"
+	}),
+	
+	VerticalScrollbar = DeriveCoreControl("VerticalScrollbar", "Control", {
+		SetPercent = "auto",
+		GetPercent = "auto",
+		SetChangeSize = "auto",
+		SetScrollRegionSize = "auto",
+		GetBarSize = "auto",
+		OnValueChanged = "auto"
+	}),
+	]]
 	
 	--[[
-	TYPE = DeriveCoreControl("TYPE", "Control", core.consor_TYPE_ctor, nil, {
-		FUNC = core.consor_TYPE_FUNC
+	TYPE = DeriveCoreControl("TYPE", "Control", {
+		FUNC = "auto",
 	}),
 	]]
 	

@@ -20,15 +20,20 @@ end)
 local checkbox = Consor.CheckBox()
 checkbox:SetText("Check me")
 
+local label = Consor.Label()
+label:SetText("I'm a label!")
+
+local passbox = Consor.PasswordBox()
+
 local flow = Consor.FlowContainer(Consor.FlowAxis.Vertical, 0)
 flow:AddControl(button)
 flow:AddControl(checkbox)
-flow:AddControl(hscroll)
+flow:AddControl(label)
+flow:AddControl(passbox)
 
 window = Consor.WindowContainer(flow, "Test")
 window:Show()
 Consor.WindowSystem.Close()
-
 
 --[[
 print = function(...)

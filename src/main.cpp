@@ -1209,13 +1209,6 @@ int consor_horizontalscrollbar_ctor(lua_State* L)
 	return 1;
 }
 
-int consor_horizontalscrollbar_dtor(lua_State* L)
-{
-	int handle = Stack<Handle>::Get(L, 1);
-	Object<HorizontalScrollbar>::Destroy(handle);
-	return 0;
-}
-
 int consor_horizontalscrollbar_setpercent(lua_State* L)
 {
 	HorizontalScrollbar* self = Object<HorizontalScrollbar>::Get(Stack<Handle>::Get(L, 1));
@@ -1276,6 +1269,52 @@ int consor_horizontalscrollbar_onvaluechanged(lua_State* L)
 	return 0;
 }
 
+// Label
+int consor_label_ctor(lua_State* L)
+{
+	int handle = Object<Label>::Make();
+	Stack<Handle>::Push(L, handle);
+	return 1;
+}
+
+int consor_label_settext(lua_State* L)
+{
+	Label* self = Object<Label>::Get(Stack<Handle>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected label");
+	lua_check(L, Stack<string>::Check(L, 2), "argument #2 expected string");
+	
+	self->SetText( Stack<string>::Get(L, 2) );
+	return 0;
+}
+
+// PasswordBox
+int consor_passwordbox_ctor(lua_State* L)
+{
+	int handle = Object<PasswordBox>::Make();
+	Stack<Handle>::Push(L, handle);
+	return 1;
+}
+
+int consor_passwordbox_getpassword(lua_State* L)
+{
+	PasswordBox* self = Object<PasswordBox>::Get(Stack<Handle>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected passwordbox");
+	
+	Stack<string>::Push(L, self->GetPassword());
+	return 1;
+}
+
+int consor_passwordbox_setpasswordchar(lua_State* L)
+{
+	PasswordBox* self = Object<PasswordBox>::Get(Stack<Handle>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected passwordbox");
+	lua_check(L, Stack<char>::Check(L, 2), "argument #2 expected char [string]");
+	
+	char c = Stack<char>::Get(L, 2);
+	self->SetPasswordChar(c);
+	return 0;
+}
+
 /*
 
 int consor_TYPE_ctor(lua_State* L)
@@ -1283,13 +1322,6 @@ int consor_TYPE_ctor(lua_State* L)
 	int handle = Object<TYPE>::Make();
 	Stack<Handle>::Push(L, handle);
 	return 1;
-}
-
-int consor_TYPE_dtor(lua_State* L)
-{
-	int handle = Stack<Handle>::Get(L, 1);
-	Object<TYPE>::Destroy(handle);
-	return 0;
 }
 
 int consor_TYPE_FUNC(lua_State* L)
@@ -1419,14 +1451,23 @@ static const luaL_Reg R[] =
 	FUNC(consor_graph_addxaxisnotch),
 	FUNC(consor_graph_onclick),
 	
+	// HorizontalScrollbar
 	FUNC(consor_horizontalscrollbar_ctor),
-	FUNC(consor_horizontalscrollbar_dtor),
 	FUNC(consor_horizontalscrollbar_setpercent),
 	FUNC(consor_horizontalscrollbar_getpercent),
 	FUNC(consor_horizontalscrollbar_setchangesize),
 	FUNC(consor_horizontalscrollbar_setscrollregionsize),
 	FUNC(consor_horizontalscrollbar_getbarsize),
 	FUNC(consor_horizontalscrollbar_onvaluechanged),
+	
+	// Label
+	FUNC(consor_label_ctor),
+	FUNC(consor_label_settext),
+	
+	// PasswordBox
+	FUNC(consor_passwordbox_ctor),
+	FUNC(consor_passwordbox_getpassword),
+	FUNC(consor_passwordbox_setpasswordchar),
 	
 	//FUNC(consor_console_renderer_),
 	{ NULL, NULL } //   
