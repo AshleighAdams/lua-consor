@@ -3,12 +3,14 @@ local core = require("consor.core")
 
 local ControlMetas = {}
 
-local function DeriveControl(name, base, ctor, dtor, funcs)
+local function DeriveCoreControl(name, base, funcs)
 	base = ControlMetas[base] or {}
 	
+	local lowername = name:lower()
+	
 	local meta = {}
-	meta._ctor = ctor
-	meta._dtor = dtor
+	meta._ctor = core["consor_" .. lowername .. "_ctor"]
+	meta._dtor = core.consor_control_dtor -- this should call any implimentations from the derived virtual dtor
 	meta._base = base
 	meta._name = name
 	meta.__index = function(self, name)
@@ -33,6 +35,16 @@ local function DeriveControl(name, base, ctor, dtor, funcs)
 	
 	for funcname_, corefunc_ in pairs(funcs) do
 		local funcname, corefunc = funcname_, corefunc_ -- make copies
+		
+		if type(corefunc) == "string" then
+			if corefunc == "auto" then
+				local cfn = string.format("consor_%s_%s", lowername, funcname:lower())
+				corefunc = core[cfn] or error(cfn .. " could not be found!")
+			else
+				error("unknown " .. corefunc)
+			end
+		end
+		
 		meta[funcname] = function(self, ...)
 			return corefunc(self.handle, ...)
 		end
@@ -40,7 +52,8 @@ local function DeriveControl(name, base, ctor, dtor, funcs)
 	
 	ControlMetas[name] = meta
 	
-	if not ctor then -- this control can't be constructed
+	if not meta._ctor then -- this control can't be constructed
+		core.consor_util_log(name .. " no ctor")
 		return nil
 	end
 	
@@ -59,42 +72,73 @@ local Consor; Consor = {
 	Colour = function(r,g,b,a) return {R = r or 0, G = g or 0, B = b or 0, A = a or 1} end,
 	
 	-- The base control
-	Control = DeriveControl("Control", "", nil, nil, {
-		GetSize = core.consor_control_getsize,
-		OnResize = core.consor_control_onresize,
-		ForceResize = core.consor_control_forceresize,
-		Draw = core.consor_control_draw,
-		HandleInput = core.consor_control_handleinput,
-		CanFocus = core.consor_control_canfocus,
+	Control = DeriveCoreControl("Control", "", {
+		GetSize = "auto",
+		OnResize = "auto",
+		ForceResize = "auto",
+		Draw = "auto",
+		HandleInput = "auto",
+		CanFocus = "auto"
 	}),
 	
 	-- Containers
-	AlignContainer = DeriveControl("AlignContainer", "Control", core.consor_aligncontainer_ctor, nil, {
+	AlignContainer = DeriveCoreControl("AlignContainer", "Control", {
 		-- no custom methods...
 	}),
-	BorderContainer = DeriveControl("BorderContainer", "Control", core.consor_bordercontainer_ctor, nil, {
+	
+	BorderContainer = DeriveCoreControl("BorderContainer", "Control", {
 		-- no custom methods...
 	}),
-	FlowContainer = DeriveControl("FlowContainer", "Control", core.consor_flowcontainer_ctor, nil, {
-		AddControl = core.consor_flowcontainer_addcontrol
+	
+	FlowContainer = DeriveCoreControl("FlowContainer", "Control", {
+		AddControl = "auto",
 	}),
-	ScrollContainer = DeriveControl("ScrollContainer", "Control", core.consor_scrollcontainer_ctor, nil, {
-		ScrollLeft = core.consor_scrollcontainer_scrollleft,
-		ScrollRight = core.consor_scrollcontainer_scrollright,
-		ScrollUp = core.consor_scrollcontainer_scrollup,
-		ScrollDown = core.consor_scrollcontainer_scrolldown
+	FlowAxis = {
+		Horizontal = 0,
+		Vertical = 1
+	},
+	
+	ScrollContainer = DeriveCoreControl("ScrollContainer", "Control", {
+		ScrollLeft = "auto",
+		ScrollRight = "auto",
+		ScrollUp = "auto",
+		ScrollDown = "auto"
 	}),
-	WindowContainer = DeriveControl("WindowContainer", "Control", core.consor_windowcontainer_ctor, nil, {
+	
+	WindowContainer = DeriveCoreControl("WindowContainer", "Control", {
 		-- SetTitle = core.consor_windowcontainer_settitle
-		Show = core.consor_windowcontainer_show,
-		Close = core.consor_windowcontainer_close
+		Show = "auto",
+		Close = "auto"
 	}),
 	
 	-- Controls
-	Button = DeriveControl("Button", "Control", core.consor_button_ctor, nil, {
-		SetText = core.consor_button_settext,
-		OnClick = core.consor_button_onclick,
+	Button = DeriveCoreControl("Button", "Control", {
+		SetText = "auto",
+		OnClick = "auto"
 	}),
+	
+	CheckBox = DeriveCoreControl("CheckBox", "Control", {
+		SetText = "auto",
+		Checked = "auto",
+		SetChecked = "auto",
+		OnValueChanged = "auto",
+	}),
+	
+	HorizontalScrollbar = DeriveCoreControl("HorizontalScrollbar", "Control", {
+		SetPercent = "auto",
+		GetPercent = "auto",
+		SetChangeSize = "auto",
+		SetScrollRegionSize = "auto",
+		GetBarSize = "auto",
+		OnValueChanged = "auto"
+	}),
+	
+	
+	--[[
+	TYPE = DeriveCoreControl("TYPE", "Control", core.consor_TYPE_ctor, nil, {
+		FUNC = core.consor_TYPE_FUNC
+	}),
+	]]
 	
 	WindowSystem = setmetatable({
 		Setup                    = function(renderer, input)                    return core.consor_windowsystem_setup                   (renderer, input) end,

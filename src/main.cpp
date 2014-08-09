@@ -885,8 +885,8 @@ int consor_aligncontainer_ctor(lua_State* L)
 	int axis = Stack<int>::Get(L, 2);
 	int align = Stack<int>::Get(L, 3);
 	
-	int handel = Object<AlignContainer>::Make(*client, (AlignContainer::Axis)axis, (AlignContainer::Align)align);
-	Stack<int>::Push(L, handel);
+	int handle = Object<AlignContainer>::Make(*client, (AlignContainer::Axis)axis, (AlignContainer::Align)align);
+	Stack<Handle>::Push(L, handle);
 	return 1;
 }
 
@@ -906,8 +906,8 @@ int consor_bordercontainer_ctor(lua_State* L)
 		lua_check(L, Stack<int>::Check(L, 2), "argument #2 expected number");
 		int border = Stack<int>::Get(L, 2);
 		
-		int handel = Object<BorderContainer>::Make(*client, border);
-		Stack<int>::Push(L, handel);
+		int handle = Object<BorderContainer>::Make(*client, border);
+		Stack<Handle>::Push(L, handle);
 		return 1;
 	}
 	else
@@ -921,8 +921,8 @@ int consor_bordercontainer_ctor(lua_State* L)
 		    top    = Stack<int>::Get(L, 4),
 		    bottom = Stack<int>::Get(L, 5);
 		
-		int handel = Object<BorderContainer>::Make(*client, left, right, top, bottom);
-		Stack<int>::Push(L, handel);
+		int handle = Object<BorderContainer>::Make(*client, left, right, top, bottom);
+		Stack<Handle>::Push(L, handle);
 		return 1;
 	}
 }
@@ -936,8 +936,8 @@ int consor_flowcontainer_ctor(lua_State* L)
 	int axis = Stack<int>::Get(L, 1);
 	int seperation = Stack<int>::Get(L, 2);
 	
-	int handel = Object<FlowContainer>::Make((FlowContainer::FlowAxis)axis, seperation);
-	Stack<int>::Push(L, handel);
+	int handle = Object<FlowContainer>::Make((FlowContainer::FlowAxis)axis, seperation);
+	Stack<Handle>::Push(L, handle);
 	return 1;
 }
 
@@ -962,8 +962,8 @@ int consor_scrollcontainer_ctor(lua_State* L)
 	
 	Size sz = Stack<Size>::Get(L, 2);
 	
-	int handel = Object<ScrollContainer>::Make(*client, sz);
-	Stack<int>::Push(L, handel);
+	int handle = Object<ScrollContainer>::Make(*client, sz);
+	Stack<Handle>::Push(L, handle);
 	return 1;
 }
 
@@ -1016,11 +1016,11 @@ int consor_windowcontainer_ctor(lua_State* L)
 	
 	string title = Stack<string>::Get(L, 2);
 	
-	int handel = Object<WindowContainer>::Make(*client, title);
+	int handle = Object<WindowContainer>::Make(*client, title);
 	
 	cerr << client->GetSize() << "\n";
 	
-	Stack<int>::Push(L, handel);
+	Stack<Handle>::Push(L, handle);
 	return 1;
 }
 
@@ -1049,8 +1049,8 @@ int consor_windowcontainer_close(lua_State* L)
 // Button
 int consor_button_ctor(lua_State* L)
 {	
-	int handel = Object<Button>::Make();
-	Stack<int>::Push(L, handel);
+	int handle = Object<Button>::Make();
+	Stack<Handle>::Push(L, handle);
 	return 1;
 }
 
@@ -1081,8 +1081,8 @@ int consor_button_onclick(lua_State* L)
 // CheckBox
 int consor_checkbox_ctor(lua_State* L)
 {	
-	int handel = Object<CheckBox>::Make();
-	Stack<int>::Push(L, handel);
+	int handle = Object<CheckBox>::Make();
+	Stack<Handle>::Push(L, handle);
 	return 1;
 }
 
@@ -1134,15 +1134,15 @@ int consor_graph_ctor(lua_State* L)
 {
 	lua_check(L, Stack<double>::Check(L, 1), "argument #1 expected number");
 	double height = Stack<double>::Get(L, 1);
-	int handel = Object<Graph>::Make(height);
-	Stack<int>::Push(L, handel);
+	int handle = Object<Graph>::Make(height);
+	Stack<Handle>::Push(L, handle);
 	return 1;
 }
 
 int consor_graph_dtor(lua_State* L)
 {
-	int handel = Stack<Handle>::Get(L, 1);
-	Object<Graph>::Destroy(handel);
+	int handle = Stack<Handle>::Get(L, 1);
+	Object<Graph>::Destroy(handle);
 	return 0;
 }
 
@@ -1199,6 +1199,108 @@ int consor_graph_onclick(lua_State* L)
 	handle->DontUnregister();
 	return 0;
 }
+
+
+int consor_horizontalscrollbar_ctor(lua_State* L)
+{
+	lua_check(L, Stack<Size>::Check(L, 1), "argument #1 expected size");
+	int handle = Object<HorizontalScrollbar>::Make();
+	Stack<Handle>::Push(L, handle);
+	return 1;
+}
+
+int consor_horizontalscrollbar_dtor(lua_State* L)
+{
+	int handle = Stack<Handle>::Get(L, 1);
+	Object<HorizontalScrollbar>::Destroy(handle);
+	return 0;
+}
+
+int consor_horizontalscrollbar_setpercent(lua_State* L)
+{
+	HorizontalScrollbar* self = Object<HorizontalScrollbar>::Get(Stack<Handle>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected horizontalscrollbar");
+	lua_check(L, Stack<double>::Check(L, 1), "argument #1 expected number");
+	
+	self->SetPercent( Stack<double>::Get(L, 1) );
+	return 0;
+}
+
+int consor_horizontalscrollbar_getpercent(lua_State* L)
+{
+	HorizontalScrollbar* self = Object<HorizontalScrollbar>::Get(Stack<Handle>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected horizontalscrollbar");
+	
+	Stack<double>::Push( L, self->GetPercent() );
+	return 1;
+}
+
+int consor_horizontalscrollbar_setchangesize(lua_State* L)
+{
+	HorizontalScrollbar* self = Object<HorizontalScrollbar>::Get(Stack<Handle>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected horizontalscrollbar");
+	lua_check(L, Stack<double>::Check(L, 1), "argument #1 expected number");
+	
+	self->SetChangeSize( Stack<double>::Get(L, 1) );
+	return 0;
+}
+
+int consor_horizontalscrollbar_setscrollregionsize(lua_State* L)
+{
+	HorizontalScrollbar* self = Object<HorizontalScrollbar>::Get(Stack<Handle>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected horizontalscrollbar");
+	lua_check(L, Stack<double>::Check(L, 1), "argument #1 expected number");
+	
+	self->SetScrollRegionSize( Stack<double>::Get(L, 1) );
+	return 0;
+}
+
+int consor_horizontalscrollbar_getbarsize(lua_State* L)
+{
+	HorizontalScrollbar* self = Object<HorizontalScrollbar>::Get(Stack<Handle>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected horizontalscrollbar");
+	
+	Stack<double>::Push( L, self->GetBarSize() );
+	return 1;
+}
+
+int consor_horizontalscrollbar_onvaluechanged(lua_State* L)
+{
+	HorizontalScrollbar* self = Object<HorizontalScrollbar>::Get(Stack<Handle>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected horizontalscrollbar");
+	lua_check(L, lua_isfunction(L, 2), "argument #2 expected function");
+	
+	lua_function_reference<void(double)> func(L, 2);
+	auto handle = self->ValueChanged += func;
+	handle->DontUnregister();
+	return 0;
+}
+
+/*
+
+int consor_TYPE_ctor(lua_State* L)
+{
+	int handle = Object<TYPE>::Make();
+	Stack<Handle>::Push(L, handle);
+	return 1;
+}
+
+int consor_TYPE_dtor(lua_State* L)
+{
+	int handle = Stack<Handle>::Get(L, 1);
+	Object<TYPE>::Destroy(handle);
+	return 0;
+}
+
+int consor_TYPE_FUNC(lua_State* L)
+{
+	TYPE* self = Object<TYPE>::Get(Stack<Handle>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected TYPE");
+	
+	return 0;
+}
+
+*/
 
 #define FUNC(_x_) { #_x_, &_x_ }
 static const luaL_Reg R[] =
@@ -1316,7 +1418,16 @@ static const luaL_Reg R[] =
 	FUNC(consor_graph_setylabel),
 	FUNC(consor_graph_addxaxisnotch),
 	FUNC(consor_graph_onclick),
-		
+	
+	FUNC(consor_horizontalscrollbar_ctor),
+	FUNC(consor_horizontalscrollbar_dtor),
+	FUNC(consor_horizontalscrollbar_setpercent),
+	FUNC(consor_horizontalscrollbar_getpercent),
+	FUNC(consor_horizontalscrollbar_setchangesize),
+	FUNC(consor_horizontalscrollbar_setscrollregionsize),
+	FUNC(consor_horizontalscrollbar_getbarsize),
+	FUNC(consor_horizontalscrollbar_onvaluechanged),
+	
 	//FUNC(consor_console_renderer_),
 	{ NULL, NULL } //   
 };

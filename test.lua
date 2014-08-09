@@ -9,18 +9,24 @@ local input = Consor.Input.InputSystem()
 Consor.WindowSystem.Setup(renderer, input)
 Consor.WindowSystem.SetSkin("Mono")
 
-local btn = Consor.Button()
-local window = Consor.WindowContainer(btn, "Hi!")
+local window
 
-btn:SetText("Hello")
-btn:OnClick(function()
-	btn:SetText("GO 'WAY OR I PUNK YOU A SECOND TIME-A")
-	Consor.Util.Sleep(2.5)
+local button = Consor.Button()
+button:SetText("Exit")
+button:OnClick(function()
 	window:Close()
 end)
 
-window:Show()
+local checkbox = Consor.CheckBox()
+checkbox:SetText("Check me")
 
+local flow = Consor.FlowContainer(Consor.FlowAxis.Vertical, 0)
+flow:AddControl(button)
+flow:AddControl(checkbox)
+flow:AddControl(hscroll)
+
+window = Consor.WindowContainer(flow, "Test")
+window:Show()
 Consor.WindowSystem.Close()
 
 
