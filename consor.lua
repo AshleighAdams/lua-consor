@@ -146,13 +146,14 @@ local Consor; Consor = {
 		SetPercent = "auto",
 		GetPercent = "auto"
 	}),
-	--[[
+	
 	RadioBox = DeriveCoreControl("RadioBox", "Control", {
 		AddChoice = "auto",
 		GetChoice = "auto",
 		OnValueChanged = "auto",
 	}),
 	
+	--[[
 	TextBox = DeriveCoreControl("TextBox", "Control", {
 		SetText = "auto",
 		GetText = "auto",

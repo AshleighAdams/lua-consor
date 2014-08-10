@@ -28,12 +28,17 @@ local passbox = Consor.PasswordBox()
 local progress = Consor.ProgressBar()
 progress:SetPercent(0.25)
 
+local radiobox = Consor.RadioBox()
+radiobox:AddChoice("First")
+radiobox:AddChoice("Second")
+
 local flow = Consor.FlowContainer(Consor.FlowAxis.Vertical, 0)
 flow:AddControl(button)
 flow:AddControl(checkbox)
 flow:AddControl(label)
 flow:AddControl(passbox)
 flow:AddControl(progress)
+flow:AddControl(radiobox)
 
 window = Consor.WindowContainer(flow, "Test")
 window:Show()

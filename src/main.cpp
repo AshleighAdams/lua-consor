@@ -1342,6 +1342,45 @@ int consor_progressbar_getpercent(lua_State* L)
 	return 1;
 }
 
+int consor_radiobox_ctor(lua_State* L)
+{
+	int handle = Object<RadioBox>::Make();
+	Stack<Handle>::Push(L, handle);
+	return 1;
+}
+
+
+int consor_radiobox_addchoice(lua_State* L)
+{
+	RadioBox* self = Object<RadioBox>::Get(Stack<Handle>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected radiobox");
+	lua_check(L, Stack<string>::Check(L, 2), "argument #2 expected string");
+	
+	self->AddChoice(Stack<string>::Get(L, 2));
+	return 0;
+}
+
+int consor_radiobox_getchoice(lua_State* L)
+{
+	RadioBox* self = Object<RadioBox>::Get(Stack<Handle>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected radiobox");
+	
+	Stack<string>::Push(L, self->GetChoice());
+	return 1;
+}
+
+int consor_radiobox_onvaluechanged(lua_State* L)
+{
+	RadioBox* self = Object<RadioBox>::Get(Stack<Handle>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected radiobox");
+	lua_check(L, lua_isfunction(L, 2), "argument #2 expected function");
+	lua_function_reference<void(string)> func(L, 2);
+	
+	auto handle = self->OnValueChanged += func;
+	handle->DontUnregister();
+	return 0;
+}
+
 /*
 
 int consor_TYPE_ctor(lua_State* L)
@@ -1500,6 +1539,12 @@ static const luaL_Reg R[] =
 	FUNC(consor_progressbar_ctor),
 	FUNC(consor_progressbar_getpercent),
 	FUNC(consor_progressbar_setpercent),
+	
+	// RadioBox
+	FUNC(consor_radiobox_ctor),
+	FUNC(consor_radiobox_addchoice),
+	FUNC(consor_radiobox_getchoice),
+	FUNC(consor_radiobox_onvaluechanged),
 	
 	//FUNC(consor_console_renderer_),
 	{ NULL, NULL } //   
