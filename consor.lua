@@ -153,13 +153,13 @@ local Consor; Consor = {
 		OnValueChanged = "auto",
 	}),
 	
-	--[[
 	TextBox = DeriveCoreControl("TextBox", "Control", {
 		SetText = "auto",
 		GetText = "auto",
 		OnValueChanged = "auto"
 	}),
 	
+	--[[
 	ProgressBar = DeriveCoreControl("VerticalProgressBar", "ProgressBar", {
 		SetGraphMode = "auto",
 		ColourOveride = "auto",
@@ -211,6 +211,7 @@ local Consor; Consor = {
 			str = str:format(...)
 			core.consor_util_log(str)
 		end,
+		HookLog        = core.consor_util_hooklog,
 		Round          = core.consor_util_round,
 		Map            = core.consor_util_map,
 		MessageBox     = core.consor_util_messagebox,

@@ -3,13 +3,43 @@
 local Consor = require("consor")
 
 
+
+
+local window, consolewindow
+
+----------------------------- Build the console
+
+local lines_flow = Consor.FlowContainer(Consor.FlowAxis.Vertical, 0)
+local scroll = Consor.ScrollContainer(lines_flow, Consor.Size(70, 15))
+consolewindow = Consor.WindowContainer(scroll, "Console")
+
+Consor.WindowSystem.RegisterHotKey(nil, string.byte("`"), false, false, function()
+	if consolewindow.open then
+		Consor.WindowSystem.UnregisterWindow(consolewindow)
+		consolewindow.open = false
+	else
+		Consor.WindowSystem.RegisterWindow(consolewindow, Consor.Vector(2, 2))
+		consolewindow.open = true
+	end
+end)
+
+Consor.Util.HookLog(function(str)
+	local lbl = Consor.Label()
+	lbl:SetText(str)
+	lines_flow:AddControl(lbl)
+	
+	while scroll:ScrollDown() do end
+end)
+
+---------------------------- Setup the system
+
 local renderer = Consor.Console.ConsoleRenderer()
 local input = Consor.Input.InputSystem()
 
 Consor.WindowSystem.Setup(renderer, input)
 Consor.WindowSystem.SetSkin("Mono")
 
-local window
+---------------------------- Build theee test window
 
 local button = Consor.Button()
 button:SetText("Exit")
@@ -17,13 +47,40 @@ button:OnClick(function()
 	window:Close()
 end)
 
+
+local themes = {
+	Default = "Default",
+	Orange = "Hacker",
+	Mono = "Mono"
+}
+local themebtn = Consor.Button()
+themebtn:SetText("Change Theme")
+themebtn:OnClick(function()
+	local ops = {}
+	for k,v in pairs(themes) do
+		table.insert(ops, k)
+	end
+	table.sort(ops)
+	
+	local theme = themes[Consor.Util.ChoiceList("Select a theme", "Theme", ops)]
+	if theme ~= nil then
+		Consor.WindowSystem.SetSkin(theme)
+	end
+end)
+
 local checkbox = Consor.CheckBox()
 checkbox:SetText("Check me")
+checkbox:OnValueChanged(function(val)
+	Consor.Util.Log("checkbox = %s", val)
+end)
 
 local label = Consor.Label()
 label:SetText("I'm a label!")
 
 local passbox = Consor.PasswordBox()
+passbox:OnValueChanged(function(val)
+	Consor.Util.Log("passbox = %s", val)
+end)
 
 local progress = Consor.ProgressBar()
 progress:SetPercent(0.25)
@@ -31,14 +88,24 @@ progress:SetPercent(0.25)
 local radiobox = Consor.RadioBox()
 radiobox:AddChoice("First")
 radiobox:AddChoice("Second")
+radiobox:OnValueChanged(function(val)
+	Consor.Util.Log("radiobox = %s", val)
+end)
+
+local textbox = Consor.TextBox()
+textbox:OnValueChanged(function(val)
+	Consor.Util.Log("textbox = %s", val)
+end)
 
 local flow = Consor.FlowContainer(Consor.FlowAxis.Vertical, 0)
 flow:AddControl(button)
+flow:AddControl(themebtn)
 flow:AddControl(checkbox)
 flow:AddControl(label)
 flow:AddControl(passbox)
 flow:AddControl(progress)
 flow:AddControl(radiobox)
+flow:AddControl(textbox)
 
 window = Consor.WindowContainer(flow, "Test")
 window:Show()

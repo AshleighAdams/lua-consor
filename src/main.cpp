@@ -675,7 +675,14 @@ int consor_windowsystem_setskin(lua_State* L)
 }
 
 // Util
-//int consor_util_hooklog(lua_State* L);
+int consor_util_hooklog(lua_State* L)
+{
+	lua_check(L, lua_isfunction(L, 1), "argument #1 expected function");
+	lua_function_reference<void(string)> func(L, 1);
+	
+	Util::HookLog(func);
+	return 0;
+}
 
 int consor_util_log(lua_State* L)
 {
@@ -958,7 +965,7 @@ int consor_scrollcontainer_ctor(lua_State* L)
 {
 	Control* client = Object<Control>::Get(Stack<Handle>::Get(L, 1));
 	lua_check(L, client, "argument #1 expected control");
-	lua_check(L, Stack<string>::Check(L, 2), "argument #2 expected size");
+	lua_check(L, Stack<Size>::Check(L, 2), "argument #2 expected size");
 	
 	Size sz = Stack<Size>::Get(L, 2);
 	
@@ -1381,6 +1388,45 @@ int consor_radiobox_onvaluechanged(lua_State* L)
 	return 0;
 }
 
+int consor_textbox_ctor(lua_State* L)
+{
+	int handle = Object<TextBox>::Make();
+	Stack<Handle>::Push(L, handle);
+	return 1;
+}
+
+
+int consor_textbox_settext(lua_State* L)
+{
+	TextBox* self = Object<TextBox>::Get(Stack<Handle>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected textbox");
+	lua_check(L, Stack<string>::Check(L, 2), "argument #2 expected string");
+	
+	self->SetText(Stack<string>::Get(L, 2));
+	return 0;
+}
+
+int consor_textbox_gettext(lua_State* L)
+{
+	TextBox* self = Object<TextBox>::Get(Stack<Handle>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected textbox");
+	
+	Stack<string>::Push(L, self->GetText());
+	return 1;
+}
+
+int consor_textbox_onvaluechanged(lua_State* L)
+{
+	TextBox* self = Object<TextBox>::Get(Stack<Handle>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected textbox");
+	lua_check(L, lua_isfunction(L, 2), "argument #2 expected function");
+	lua_function_reference<void(string)> func(L, 2);
+	
+	auto handle = self->ValueChanged += func;
+	handle->DontUnregister();
+	return 0;
+}
+
 /*
 
 int consor_TYPE_ctor(lua_State* L)
@@ -1455,6 +1501,7 @@ static const luaL_Reg R[] =
 	
 	// Util
 	FUNC(consor_util_log),
+	FUNC(consor_util_hooklog),
 	FUNC(consor_util_round),
 	FUNC(consor_util_map),
 	FUNC(consor_util_messagebox),
@@ -1545,6 +1592,12 @@ static const luaL_Reg R[] =
 	FUNC(consor_radiobox_addchoice),
 	FUNC(consor_radiobox_getchoice),
 	FUNC(consor_radiobox_onvaluechanged),
+	
+	// TextBox
+	FUNC(consor_textbox_ctor),
+	FUNC(consor_textbox_settext),
+	FUNC(consor_textbox_gettext),
+	FUNC(consor_textbox_onvaluechanged),
 	
 	//FUNC(consor_console_renderer_),
 	{ NULL, NULL } //   
