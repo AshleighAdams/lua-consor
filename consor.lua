@@ -16,7 +16,13 @@ local function DeriveCoreControl(name, base, funcs)
 	meta._base = base
 	meta._name = name
 	meta.__index = function(self, name)
-		local basefunc = rawget(meta._base, name)
+		local base = meta._base or {}
+		local basefunc
+		
+		while basefunc == nil and base ~= nil do
+			basefunc = base[name]
+			base = base._base
+		end
 		
 		if rawget(meta, name) == nil and basefunc ~= nil then
 			return basefunc
