@@ -953,10 +953,21 @@ int consor_flowcontainer_addcontrol(lua_State* L)
 	FlowContainer* self = Object<FlowContainer>::Get(Stack<Handle>::Get(L, 1));
 	Control* ctrl = Object<Control>::Get(Stack<Handle>::Get(L, 2));
 	lua_check(L, self, "argument #1 expected flowcontainer");
-	lua_check(L, ctrl, "argument #1 expected control");
+	lua_check(L, ctrl, "argument #2 expected control");
 		
 	double size = Stack<double>::Get(L, 3);
 	self->AddControl(*ctrl, size);
+	return 0;
+}
+
+int consor_flowcontainer_removecontrol(lua_State* L)
+{
+	FlowContainer* self = Object<FlowContainer>::Get(Stack<Handle>::Get(L, 1));
+	Control* ctrl = Object<Control>::Get(Stack<Handle>::Get(L, 2));
+	lua_check(L, self, "argument #1 expected flowcontainer");
+	lua_check(L, ctrl, "argument #2 expected control");
+	
+	self->RemoveControl(*ctrl);
 	return 0;
 }
 
@@ -1427,6 +1438,46 @@ int consor_textbox_onvaluechanged(lua_State* L)
 	return 0;
 }
 
+// VerticalProgressBar
+int consor_verticalprogressbar_ctor(lua_State* L)
+{
+	int handle = Object<VerticalProgressBar>::Make();
+	Stack<Handle>::Push(L, handle);
+	return 1;
+}
+
+int consor_verticalprogressbar_setgraphmode(lua_State* L)
+{
+	VerticalProgressBar* self = Object<VerticalProgressBar>::Get(Stack<Handle>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected verticalprogressbar");
+	lua_check(L, Stack<size_t>::Check(L, 2), "argument #2 expected number");
+	
+	self->SetGraphMode(Stack<size_t>::Get(L, 2));
+	return 0;
+}
+
+int consor_verticalprogressbar_colouroveride(lua_State* L)
+{
+	VerticalProgressBar* self = Object<VerticalProgressBar>::Get(Stack<Handle>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected verticalprogressbar");
+	lua_check(L, Stack<Colour>::Check(L, 2), "argument #2 expected colour");
+	
+	self->ColourOveride( Stack<Colour>::Get(L, 2) );
+	return 0;
+}
+
+int consor_verticalprogressbar_onclick(lua_State* L)
+{
+	VerticalProgressBar* self = Object<VerticalProgressBar>::Get(Stack<Handle>::Get(L, 1));
+	lua_check(L, self, "argument #1 expected verticalprogressbar");
+	lua_check(L, lua_isfunction(L, 2), "argument #2 expected function");
+	lua_function_reference<void(double, size_t)> func(L, 2);
+	
+	auto handle = self->Click += func;
+	handle->DontUnregister();
+	return 0;
+}
+
 /*
 
 int consor_TYPE_ctor(lua_State* L)
@@ -1531,6 +1582,7 @@ static const luaL_Reg R[] =
 	// FlowContainer
 	FUNC(consor_flowcontainer_ctor),
 	FUNC(consor_flowcontainer_addcontrol),
+	FUNC(consor_flowcontainer_removecontrol),
 	
 	FUNC(consor_scrollcontainer_ctor),
 	FUNC(consor_scrollcontainer_scrollleft),
@@ -1598,6 +1650,11 @@ static const luaL_Reg R[] =
 	FUNC(consor_textbox_settext),
 	FUNC(consor_textbox_gettext),
 	FUNC(consor_textbox_onvaluechanged),
+	
+	FUNC(consor_verticalprogressbar_ctor),
+	FUNC(consor_verticalprogressbar_setgraphmode),
+	FUNC(consor_verticalprogressbar_colouroveride),
+	FUNC(consor_verticalprogressbar_onclick),
 	
 	//FUNC(consor_console_renderer_),
 	{ NULL, NULL } //   

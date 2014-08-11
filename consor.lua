@@ -92,6 +92,7 @@ local Consor; Consor = {
 	
 	FlowContainer = DeriveCoreControl("FlowContainer", "Control", {
 		AddControl = "auto",
+		RemoveControl = "auto"
 	}),
 	FlowAxis = {
 		Horizontal = 0,
@@ -159,13 +160,13 @@ local Consor; Consor = {
 		OnValueChanged = "auto"
 	}),
 	
-	--[[
-	ProgressBar = DeriveCoreControl("VerticalProgressBar", "ProgressBar", {
+	VerticalProgressBar = DeriveCoreControl("VerticalProgressBar", "ProgressBar", {
 		SetGraphMode = "auto",
 		ColourOveride = "auto",
 		OnClick = "auto"
 	}),
 	
+	--[[
 	VerticalScrollbar = DeriveCoreControl("VerticalScrollbar", "Control", {
 		SetPercent = "auto",
 		GetPercent = "auto",

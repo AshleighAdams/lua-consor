@@ -97,6 +97,9 @@ textbox:OnValueChanged(function(val)
 	Consor.Util.Log("textbox = %s", val)
 end)
 
+local vprogress = Consor.VerticalProgressBar()
+vprogress:SetPercent(0.25)
+
 local flow = Consor.FlowContainer(Consor.FlowAxis.Vertical, 0)
 flow:AddControl(button)
 flow:AddControl(themebtn)
@@ -106,6 +109,7 @@ flow:AddControl(passbox)
 flow:AddControl(progress)
 flow:AddControl(radiobox)
 flow:AddControl(textbox)
+flow:AddControl(vprogress)
 
 window = Consor.WindowContainer(flow, "Test")
 window:Show()
