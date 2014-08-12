@@ -54,50 +54,55 @@ Consor.WindowSystem.Setup(renderer, input)
 Consor.WindowSystem.SetSkin("Mono")
 
 local sz = renderer:GetSize()
-host = Consor.Util.InputBox("Target", "Ping")
+
+host = Consor.Util.InputBox("Host", "Ping")
 
 local flow_jitter = Consor.FlowContainer(Consor.FlowAxis.Horizontal, 0)
 local flow_ping = Consor.FlowContainer(Consor.FlowAxis.Horizontal, 0)
 
-local flow_ping_x = Consor.FlowContainer(Consor.FlowAxis.Vertical, 0)
-local flow_jitter_x = Consor.FlowContainer(Consor.FlowAxis.Vertical, 0)
+local flow_ping_y = Consor.FlowContainer(Consor.FlowAxis.Vertical, 0)
+local flow_jitter_y = Consor.FlowContainer(Consor.FlowAxis.Vertical, 0)
 
-flow_ping:AddControl(flow_ping_x)
-flow_jitter:AddControl(flow_jitter_x)
+flow_ping:AddControl(flow_ping_y)
+flow_jitter:AddControl(flow_jitter_y)
 
 flow_ping.labels = {}
 flow_jitter.labels = {}
 
-for i = 1, sz.Height / 2 - 2 do
-	local perc = Consor.Util.Map(i, 1, sz.Height / 2 - 2, 1, 0) -- remap to percent
+local barheight = sz.Height / 2 - 1
+for i = 1, barheight do
+	local perc = Consor.Util.Map(i, 1, barheight, 1, 0) -- remap to percent
 	
 	local lbl_ping = Consor.Label()
 	local lbl_jitter = Consor.Label()
 	
-	if i % 2 == 0 then
-		lbl_ping:SetText(string.format("%d%%", perc * 100))
-		lbl_jitter:SetText(string.format("%d%%", perc * 100))
+	lbl_ping:SetText("   ")
+	lbl_jitter:SetText("   ")
 	
+	if i % 2 == 1 then	
 		flow_ping.labels[perc] = lbl_ping
 		flow_jitter.labels[perc] = lbl_jitter
-	else
-		lbl_ping:SetText(string.format("   ", perc * 100))
-		lbl_jitter:SetText(string.format("   ", perc * 100))
 	end
 	
-	flow_ping_x:AddControl(lbl_ping)
-	flow_jitter_x:AddControl(lbl_jitter)
+	flow_ping_y:AddControl(lbl_ping)
+	flow_jitter_y:AddControl(lbl_jitter)
 end
 
 local flow = Consor.FlowContainer(Consor.FlowAxis.Vertical, 0)
 
+local ping_lbl = Consor.Label()
+local align_lbl_ping = Consor.AlignContainer(ping_lbl, 0, 2) -- horizontal, vertical
+
 local jitter_lbl = Consor.Label()
-local align_lbl = Consor.AlignContainer(jitter_lbl, 0, 2) -- horizontal, vertical
+local align_lbl_jitter = Consor.AlignContainer(jitter_lbl, 0, 2) -- horizontal, vertical
 
-jitter_lbl:SetText("Jitter")
 
+ping_lbl:SetText("Ping (ms)")
+jitter_lbl:SetText("Jitter (ms)")
+
+flow:AddControl(align_lbl_ping)
 flow:AddControl(flow_ping)
-flow:AddControl(align_lbl)
+flow:AddControl(align_lbl_jitter)
 flow:AddControl(flow_jitter)
 
 local window = Consor.WindowContainer(flow, "Ping")
@@ -129,30 +134,30 @@ do
 	Consor.WindowSystem.Unlock()
 end
 
-for i = 1, sz.Width - (2 + 4) do
+for i = 1, sz.Width - 4 do -- 4 = the y axis
 	local vp = Consor.VerticalProgressBar()
-	vp:ForceResize(Consor.Size(1, sz.Height / 2 - 2))
+	vp:ForceResize(Consor.Size(1, barheight))
 	vp:SetPercent(0)
 	table.insert(graphs_ping, vp)
 	flow_ping:AddControl(vp)
 	
 	local vp2 = Consor.VerticalProgressBar()
-	vp2:ForceResize(Consor.Size(1, sz.Height / 2 - 2))
+	vp2:ForceResize(Consor.Size(1, barheight))
 	vp2:SetPercent(0)
 	table.insert(graphs_jitter, vp2)
 	flow_jitter:AddControl(vp2)
 end
 
 
-Consor.WindowSystem.RegisterWindow(window, Consor.Vector(0,0))
+Consor.WindowSystem.RegisterWindow(flow, Consor.Vector(0,0))
 
 local results = {}
 for i = 1, #graphs_ping do table.insert(results, {time = 0, jitter = 0}) end
-while true do
+while true do	
 	local loss = renderer:RequestColour(Consor.Colour(1, 0, 0), true)
 	local white = renderer:RequestColour(Consor.Colour(1.0, 1.0, 1.0), true)
 	
-	local t, j = ping(host)
+	local t, j = ping()
 	
 	table.insert(results, {
 		time = t,
@@ -173,12 +178,14 @@ while true do
 	end
 
 	for perc, lbl in pairs(flow_ping.labels) do
-		local txt = perc == 0 and "0ms" or string.format("%d", Consor.Util.Map(perc, 0, 1, 0, max_ping))
+		local txt = string.format("%d", Consor.Util.Round(Consor.Util.Map(perc, 0, 1, 0, max_ping), 1))
+		txt = txt .. string.rep(" ", 4 - #txt)
 		lbl:SetText(txt)
 	end
 	
 	for perc, lbl in pairs(flow_jitter.labels) do
-		local txt = perc == 0 and "0ms" or string.format("%d", Consor.Util.Map(perc, 0, 1, 0, max_jitter))
+		local txt = string.format("%d", Consor.Util.Round(Consor.Util.Map(perc, 0, 1, 0, max_jitter), 1))
+		txt = txt .. string.rep(" ", 4 - #txt)
 		lbl:SetText(txt)
 	end
 
@@ -195,7 +202,7 @@ while true do
 		end
 	end
 	
-	Consor.WindowSystem.Draw()
+	--Consor.WindowSystem.Draw()
 	--Consor.Util.Sleep(1)
 end
 
